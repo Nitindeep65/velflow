@@ -13,10 +13,24 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS to permit frontend integration
+# Strip Vercel's service route prefix from the path if present
+@app.middleware("http")
+async def clean_vercel_prefix(request, call_next):
+    path = request.scope.get("path", "")
+    if path.startswith("/_/backend"):
+        request.scope["path"] = path[len("/_/backend"):]
+    response = await call_next(request)
+    return response
+
+# Configure CORS to permit local frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

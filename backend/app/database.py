@@ -5,11 +5,17 @@ from app.config import settings
 
 # If using sqlite, connect_args is required for multi-threading in FastAPI
 connect_args = {}
-if settings.DATABASE_URL.startswith("sqlite"):
+db_url = settings.DATABASE_URL
+
+# Sanitize postgres URL (SQLAlchemy requires postgresql:// instead of postgres://)
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+if db_url.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
 
 engine = create_engine(
-    settings.DATABASE_URL,
+    db_url,
     connect_args=connect_args
 )
 

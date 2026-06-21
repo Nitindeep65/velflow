@@ -1,4 +1,14 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+const getApiUrl = () => {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname !== "localhost" && hostname !== "127.0.0.1" && !hostname.startsWith("192.168.")) {
+      return "/_/backend/api";
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+};
+
+export const API_URL = getApiUrl();
 
 export class ApiError extends Error {
   status: number;
