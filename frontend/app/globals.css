@@ -50,43 +50,40 @@
 }
 
 :root {
-  --background: #f4f6f9;
-  --foreground: oklch(0.13 0.01 240);
-  --card: #ffffff;
-  --card-foreground: oklch(0.13 0.01 240);
-  --popover: #ffffff;
-  --popover-foreground: oklch(0.13 0.01 240);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.50 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: #e8edf3;
-  --input: #e8edf3;
-  --ring: oklch(0.65 0.1 240);
-  --chart-1: #3b82f6;
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  /* Premium Light-Themed Sidebar */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #475569;
-  --sidebar-primary: #2563eb;
-  --sidebar-primary-foreground: #2563eb;
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e8edf3;
-  --sidebar-ring: #3b82f6;
+  --background: #090a0f;
+  --foreground: #e2e8f0;
+  --card: #111218;
+  --card-foreground: #e2e8f0;
+  --popover: #111218;
+  --popover-foreground: #e2e8f0;
+  --primary: #4f46e5;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1b24;
+  --secondary-foreground: #e2e8f0;
+  --muted: #16171f;
+  --muted-foreground: #94a3b8;
+  --accent: #222431;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --border: #1f212a;
+  --input: #1f212a;
+  --ring: #4f46e5;
+  --radius: 0.75rem;
+
+  /* Premium Dark-Themed Sidebar */
+  --sidebar: #090a0f;
+  --sidebar-foreground: #94a3b8;
+  --sidebar-primary: #4f46e5;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #15161d;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #191b22;
+  --sidebar-ring: #4f46e5;
+
   /* Brand colors */
-  --brand-blue: #2563eb;
-  --brand-blue-light: #60a5fa;
-  --brand-blue-dark: #1d4ed8;
+  --brand-blue: #4f46e5;
+  --brand-blue-light: #818cf8;
+  --brand-blue-dark: #3730a3;
 }
 
 .dark {

@@ -368,19 +368,19 @@ export default function LandingPage() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen font-sans text-slate-800 flex flex-col justify-between selection:bg-blue-100 relative overflow-hidden" style={{ background: "#f8fafc" }}>
+      <div className="min-h-screen font-sans text-slate-200 flex flex-col justify-between selection:bg-indigo-950/40 relative overflow-hidden" style={{ background: "var(--background)" }}>
         
         {/* Rich background mesh */}
         <div className="absolute inset-0 pointer-events-none" style={{
           backgroundImage: [
-            "radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.12) 0%, transparent 70%)",
-            "radial-gradient(ellipse 40% 30% at 80% 20%, rgba(99,102,241,0.08) 0%, transparent 60%)",
-            "radial-gradient(ellipse 40% 30% at 20% 70%, rgba(59,130,246,0.06) 0%, transparent 60%)",
+            "radial-gradient(ellipse 80% 50% at 50% -5%, rgba(99,102,241,0.1) 0%, transparent 70%)",
+            "radial-gradient(ellipse 40% 30% at 80% 20%, rgba(99,102,241,0.06) 0%, transparent 60%)",
+            "radial-gradient(ellipse 40% 30% at 20% 70%, rgba(59,130,246,0.04) 0%, transparent 60%)",
           ].join(", ")
         }} />
         {/* Grid pattern */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.025]" style={{
-          backgroundImage: "linear-gradient(rgba(15,23,42,1) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,1) 1px, transparent 1px)",
+        <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
         }} />
 
@@ -394,23 +394,23 @@ export default function LandingPage() {
           <div className={cn(
             "max-w-5xl w-full mx-4 px-4 flex items-center justify-between transition-all duration-500 rounded-2xl",
             scrolled
-              ? "bg-white/85 backdrop-blur-xl shadow-lg shadow-slate-900/5 border border-slate-200/80 py-2.5 px-5"
+              ? "bg-[var(--card)]/80 backdrop-blur-xl shadow-lg border border-[var(--border)] py-2.5 px-5"
               : "bg-transparent py-3"
           )}>
             <Link href="/" className="flex items-center gap-2.5 group">
               <div
                 className="h-9 w-9 rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-all duration-300 relative"
-                style={{ background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)", boxShadow: "0 4px 14px rgba(59,130,246,0.35)" }}
+                style={{ background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)", boxShadow: "0 4px 14px rgba(99,102,241,0.3)" }}
               >
                 <Scale className="h-4.5 w-4.5 text-white" strokeWidth={2.5} />
               </div>
-              <span className="font-black text-[17px] tracking-tight text-slate-900">
-                Vel<span className="text-blue-600">flow</span>
+              <span className="font-black text-[17px] tracking-tight text-white">
+                Vel<span className="text-indigo-400">flow</span>
               </span>
             </Link>
 
             {/* Center nav links */}
-            <nav className="hidden md:flex items-center gap-1 p-1 rounded-xl" style={{ background: scrolled ? "transparent" : "rgba(241,245,249,0.8)" }}>
+            <nav className="hidden md:flex items-center gap-1 p-1 rounded-xl" style={{ background: scrolled ? "transparent" : "rgba(22,23,30,0.8)" }}>
               {[
                 { id: "features", label: "Features" },
                 { id: "sandbox", label: "Sandbox" },
@@ -423,8 +423,8 @@ export default function LandingPage() {
                   className={cn(
                     "text-xs font-bold transition-all px-3.5 py-1.5 rounded-lg cursor-pointer outline-none",
                     activeSection === link.id
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-slate-500 hover:text-slate-800 hover:bg-white/60"
+                      ? "bg-[var(--card)] text-indigo-400 shadow-sm border border-[var(--border)]"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
                   )}
                 >
                   {link.label}
@@ -434,14 +434,14 @@ export default function LandingPage() {
 
             <div className="flex items-center gap-2">
               <Link href="/login">
-                <Button variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-bold cursor-pointer transition-all rounded-xl text-xs h-9 px-4">
+                <Button variant="ghost" className="text-slate-300 hover:text-slate-100 hover:bg-slate-800 font-bold cursor-pointer transition-all rounded-xl text-xs h-9 px-4">
                   Login
                 </Button>
               </Link>
               <Link href="/signup">
                 <button
                   className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-white text-xs font-bold cursor-pointer transition-all hover:-translate-y-0.5"
-                  style={{ background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)", boxShadow: "0 4px 14px rgba(59,130,246,0.3)" }}
+                  style={{ background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)", boxShadow: "0 4px 14px rgba(99,102,241,0.2)" }}
                 >
                   Get Started
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -479,7 +479,7 @@ export default function LandingPage() {
                   filter: "blur(24px)",
                 }}
               />
-              <h1 className="text-4xl sm:text-[64px] font-black tracking-[-0.03em] leading-[1.0] text-slate-950">
+              <h1 className="text-4xl sm:text-[64px] font-black tracking-[-0.03em] leading-[1.0] text-slate-50">
                 Sign contracts with
                 <span
                   className="block mt-1"
