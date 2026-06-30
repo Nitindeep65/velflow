@@ -245,17 +245,17 @@ export default function ContractsPage() {
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-slide-up">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-zinc-950">Contracts</h1>
-          <p className="text-xs text-zinc-500 mt-0.5 font-medium">
+          <h1 className="text-2xl font-black tracking-tight text-slate-100">Contracts</h1>
+          <p className="text-xs text-slate-400 mt-0.5 font-medium">
             {stats.total > 0
-              ? `${stats.total} agreement${stats.total !== 1 ? "s" : ""} · ${stats.analyzed} analyzed`
-              : "Upload your first contract to begin AI-powered analysis"}
+              ? `${stats.total} agreement${stats.total !== 1 ? "s" : ""} · ${stats.analyzed} reviewed`
+              : "Upload your first contract to establish automated compliance reviews"}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {contracts.length === 0 && (
             <Button variant="outline" size="sm" onClick={restoreDefaults} disabled={isLoading}
-              className="h-9 text-xs font-semibold px-3 border-blue-100 text-blue-600 hover:bg-blue-50/50 cursor-pointer gap-1.5">
+              className="h-9 text-xs font-semibold px-3 border-indigo-900/35 bg-indigo-950/20 text-indigo-400 hover:bg-indigo-950/40 cursor-pointer gap-1.5">
               <FolderSync className="h-3.5 w-3.5" /> Seed Demo Data
             </Button>
           )}
@@ -273,20 +273,20 @@ export default function ContractsPage() {
       {/* ── KPI Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 animate-fade-slide-up" style={{ animationDelay: "60ms" }}>
         {[
-          { label: "Total Contracts", value: stats.total, sub: `${stats.analyzed} analyzed`, icon: FileText, stripe: "from-indigo-500 to-indigo-600", iconBg: "bg-indigo-50 text-indigo-600 border-indigo-100" },
-          { label: "High Risk", value: stats.highRisk, sub: stats.highRisk > 0 ? "Requires attention" : "No critical issues", icon: ShieldAlert, stripe: "from-red-500 to-rose-600", iconBg: "bg-red-50 text-red-600 border-red-100" },
-          { label: "Needs Review", value: stats.needsReview, sub: "Pending audit", icon: Clock, stripe: "from-amber-400 to-orange-500", iconBg: "bg-amber-50 text-amber-600 border-amber-100" },
-          { label: "Upcoming Renewals", value: stats.renewals, sub: "Active deadlines", icon: Calendar, stripe: "from-emerald-500 to-teal-500", iconBg: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+          { label: "Total Contracts", value: stats.total, sub: `${stats.analyzed} reviewed`, icon: FileText, stripe: "from-indigo-500 to-indigo-600", iconBg: "bg-indigo-950/40 text-indigo-400 border-indigo-900/30" },
+          { label: "High Risk", value: stats.highRisk, sub: stats.highRisk > 0 ? "Requires attention" : "No critical issues", icon: ShieldAlert, stripe: "from-red-500 to-rose-600", iconBg: "bg-rose-950/40 text-rose-400 border-rose-900/30" },
+          { label: "Needs Review", value: stats.needsReview, sub: "Pending audit", icon: Clock, stripe: "from-amber-400 to-orange-500", iconBg: "bg-amber-950/40 text-amber-400 border-amber-900/30" },
+          { label: "Upcoming Renewals", value: stats.renewals, sub: "Active deadlines", icon: Calendar, stripe: "from-emerald-500 to-teal-500", iconBg: "bg-emerald-950/40 text-emerald-400 border-emerald-900/30" },
         ].map((item, idx) => (
           <div key={item.label}
-            className="bg-white rounded-xl p-4 flex items-start justify-between card-shimmer hover:-translate-y-px hover:shadow-md transition-all duration-200"
-            style={{ border: "1px solid #e8edf3", boxShadow: "0 1px 3px rgba(15,23,42,0.04)", animationDelay: `${idx * 40}ms` }}
+            className="bg-[var(--card)] rounded-xl p-4 flex items-start justify-between card-shimmer hover:-translate-y-px hover:shadow-md transition-all duration-200"
+            style={{ border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.15)", animationDelay: `${idx * 40}ms` }}
           >
             <div>
               <div className={`h-0.5 w-8 rounded-full bg-gradient-to-r ${item.stripe} mb-3`} />
               <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "#94a3b8" }}>{item.label}</p>
-              <p className="text-2xl font-black mt-0.5" style={{ color: "#0f172a" }}>{item.value}</p>
-              <p className="text-[10px] font-medium mt-1" style={{ color: "#64748b" }}>{item.sub}</p>
+              <p className="text-2xl font-black mt-0.5" style={{ color: "var(--foreground)" }}>{item.value}</p>
+              <p className="text-[10px] font-medium mt-1" style={{ color: "#94a3b8" }}>{item.sub}</p>
             </div>
             <div className={cn("h-8 w-8 rounded-lg border flex items-center justify-center shrink-0", item.iconBg)}>
               <item.icon className="h-4 w-4" />
@@ -297,16 +297,16 @@ export default function ContractsPage() {
 
       {/* ── Contracts Panel ── */}
       <div
-        className="bg-white rounded-2xl overflow-hidden animate-fade-slide-up"
-        style={{ border: "1px solid #e8edf3", boxShadow: "0 1px 4px rgba(15,23,42,0.05)", animationDelay: "120ms" }}
+        className="bg-[var(--card)] rounded-2xl overflow-hidden animate-fade-slide-up"
+        style={{ border: "1px solid var(--border)", boxShadow: "0 1px 4px rgba(0,0,0,0.2)", animationDelay: "120ms" }}
       >
         {/* Table/Grid Header bar */}
-        <div className="px-5 py-3.5 border-b border-zinc-100 flex flex-col gap-3">
+        <div className="px-5 py-3.5 border-b border-[var(--border)] flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <h2 className="text-sm font-extrabold text-zinc-950">All Contracts</h2>
+              <h2 className="text-sm font-extrabold text-slate-200">All Contracts</h2>
               {filteredContracts.length > 0 && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-zinc-100 text-zinc-500 border border-zinc-200">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-[var(--border)]">
                   {filteredContracts.length}
                 </span>
               )}
@@ -314,7 +314,7 @@ export default function ContractsPage() {
 
             <div className="flex items-center gap-2">
               {/* View mode toggle */}
-              <div className="flex items-center bg-zinc-100 rounded-lg p-0.5 gap-0.5">
+              <div className="flex items-center bg-slate-800 rounded-lg p-0.5 gap-0.5">
                 <button
                   onClick={() => setViewMode("table")}
                   className={cn("h-7 w-7 rounded-md flex items-center justify-center transition-all cursor-pointer", viewMode === "table" ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400 hover:text-zinc-600")}
@@ -412,27 +412,27 @@ export default function ContractsPage() {
           </div>
         ) : filteredContracts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
-            <div className="h-14 w-14 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center text-zinc-300 mb-5">
+            <div className="h-14 w-14 rounded-2xl bg-[var(--card)] border border-[var(--border)] flex items-center justify-center text-slate-500 mb-5">
               <FileText className="h-7 w-7" />
             </div>
             {contracts.length === 0 ? (
               <>
-                <h3 className="text-sm font-extrabold text-zinc-950 mb-1.5">No contracts yet</h3>
-                <p className="text-xs text-zinc-400 max-w-xs leading-relaxed mb-6 font-medium">Upload your first contract to begin AI-powered risk analysis, deadline tracking, and more.</p>
+                <h3 className="text-sm font-extrabold text-slate-200 mb-1.5">No contracts yet</h3>
+                <p className="text-xs text-slate-400 max-w-xs leading-relaxed mb-6 font-medium">Upload your first contract to begin policy risk analysis, renewal tracking, and more.</p>
                 <div className="flex items-center gap-3">
-                  <Button onClick={() => setIsNewContractOpen(true)} className="h-9 text-xs font-bold px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl cursor-pointer gap-1.5 shadow-md shadow-blue-200">
+                  <Button onClick={() => setIsNewContractOpen(true)} className="h-9 text-xs font-bold px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl cursor-pointer gap-1.5 shadow-md shadow-blue-900/30">
                     <Plus className="h-3.5 w-3.5" /> Upload Contract
                   </Button>
-                  <Button variant="outline" onClick={restoreDefaults} className="h-9 text-xs font-semibold px-4 border-zinc-200 text-zinc-600 cursor-pointer gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5" /> Load Demo Data
+                  <Button variant="outline" onClick={restoreDefaults} className="h-9 text-xs font-semibold px-4 border-[var(--border)] text-slate-300 hover:text-slate-100 hover:bg-slate-800 cursor-pointer gap-1.5 bg-slate-900/40">
+                    <FolderSync className="h-3.5 w-3.5" /> Load Demo Data
                   </Button>
                 </div>
               </>
             ) : (
               <>
-                <h3 className="text-sm font-extrabold text-zinc-950 mb-1.5">No results match your filters</h3>
-                <p className="text-xs text-zinc-400 max-w-xs leading-relaxed mb-5 font-medium">Try adjusting or clearing your filter criteria.</p>
-                <Button onClick={handleClearFilters} className="h-9 text-xs font-bold px-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl cursor-pointer gap-1.5">
+                <h3 className="text-sm font-extrabold text-slate-200 mb-1.5">No results match your filters</h3>
+                <p className="text-xs text-slate-400 max-w-xs leading-relaxed mb-5 font-medium">Try adjusting or clearing your filter criteria.</p>
+                <Button onClick={handleClearFilters} className="h-9 text-xs font-bold px-4 bg-slate-850 hover:bg-slate-800 text-white rounded-xl cursor-pointer gap-1.5">
                   <X className="h-3.5 w-3.5" /> Clear Filters
                 </Button>
               </>

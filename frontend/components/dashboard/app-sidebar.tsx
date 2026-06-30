@@ -23,7 +23,7 @@ import {
   Settings,
   LogOut,
   Plus,
-  Sparkles,
+  ShieldCheck,
   ShieldAlert,
   ChevronRight,
   Scale,
@@ -68,12 +68,12 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-slate-200/80 select-none"
-      style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)" }}
+      className="border-r border-[var(--border)] select-none"
+      style={{ background: "var(--sidebar)" }}
     >
       {/* ── Brand Header ── */}
       <SidebarHeader className={cn(
-        "h-16 shrink-0 flex items-center border-b border-slate-200/70",
+        "h-16 shrink-0 flex items-center border-b border-[var(--border)]",
         isExpanded ? "px-4" : "px-0 justify-center"
       )}>
         <div className={cn("flex items-center gap-3", !isExpanded && "justify-center w-full")}>
@@ -81,24 +81,24 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
           <div
             className="h-9 w-9 rounded-xl flex items-center justify-center shrink-0 relative"
             style={{
-              background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
-              boxShadow: "0 4px 14px rgba(59,130,246,0.35)",
+              background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
+              boxShadow: "0 4px 14px rgba(99,102,241,0.2)",
             }}
           >
             <Scale className="h-[18px] w-[18px] text-white" strokeWidth={2.5} />
             <span
-              className="absolute inset-0 rounded-xl animate-ping opacity-20 bg-blue-400"
+              className="absolute inset-0 rounded-xl animate-ping opacity-20 bg-indigo-400"
               style={{ animationDuration: "3s" }}
             />
           </div>
           {/* Brand text — only when expanded */}
           {isExpanded && (
             <div className="flex flex-col min-w-0 animate-fade-slide-in-right">
-              <span className="font-black text-[15px] tracking-tight leading-none text-slate-900">
-                Vel<span className="text-blue-600">flow</span>
+              <span className="font-black text-[15px] tracking-tight leading-none text-slate-100">
+                Vel<span className="text-indigo-400">flow</span>
               </span>
               <span className="text-[9px] font-bold tracking-widest uppercase mt-0.5 text-slate-400">
-                AI Contract Navigator
+                Contract Lifecycle Suite
               </span>
             </div>
           )}
@@ -177,13 +177,13 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
                               ? "h-10 w-full px-2.5 flex items-center gap-2.5"
                               : "h-9 w-9 mx-auto flex items-center justify-center p-0",
                             isActive
-                              ? "text-blue-600"
-                              : "text-slate-500 hover:text-slate-800"
+                              ? "text-indigo-400 font-bold"
+                              : "text-slate-400 hover:text-slate-200"
                           )}
                           style={isActive ? {
-                            background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
-                            border: "1px solid rgba(59,130,246,0.15)",
-                            boxShadow: "0 1px 3px rgba(59,130,246,0.08)",
+                            background: "var(--sidebar-accent)",
+                            border: "1px solid var(--border)",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
                           } : {
                             border: "1px solid transparent",
                           }}
@@ -197,7 +197,7 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
                           >
                             {/* Active left accent — only when expanded */}
                             {isActive && isExpanded && (
-                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-blue-600" />
+                              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-500" />
                             )}
 
                             {/* Icon container */}
@@ -205,16 +205,16 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
                               "flex items-center justify-center shrink-0 rounded-lg transition-all",
                               isExpanded ? "h-6 w-6" : "h-7 w-7",
                               isActive
-                                ? "bg-blue-100/60"
-                                : "bg-transparent group-hover:bg-slate-100"
+                                ? "bg-indigo-950/40"
+                                : "bg-transparent group-hover:bg-slate-800"
                             )}>
                               <item.icon
                                 className={cn(
                                   "shrink-0 transition-colors",
                                   isExpanded ? "h-3.5 w-3.5" : "h-4 w-4",
                                   isActive
-                                    ? "text-blue-600"
-                                    : "text-slate-400 group-hover:text-slate-600"
+                                    ? "text-indigo-400"
+                                    : "text-slate-500 group-hover:text-slate-350"
                                 )}
                               />
                             </div>
@@ -229,8 +229,8 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
                                   <span className={cn(
                                     "text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shrink-0",
                                     isActive
-                                      ? "bg-blue-600/10 text-blue-600"
-                                      : "bg-slate-100 text-slate-500"
+                                      ? "bg-indigo-950 text-indigo-400 border border-indigo-900/30"
+                                      : "bg-slate-800 text-slate-400"
                                   )}>
                                     {item.badge}
                                   </span>
@@ -306,41 +306,37 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
 
       {/* ── Footer ── */}
       <SidebarFooter
-        className={cn("pb-4 flex flex-col gap-2 shrink-0 border-t border-slate-100", isExpanded ? "px-3" : "px-2")}
-        style={{ background: "linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)" }}
+        className={cn("pb-4 flex flex-col gap-2 shrink-0 border-t border-[var(--border)]", isExpanded ? "px-3" : "px-2")}
+        style={{ background: "var(--sidebar)" }}
       >
-        {/* AI Status */}
+        {/* Compliance Status */}
         {isExpanded ? (
           <div
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl mt-3"
             style={{
-              background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
-              border: "1px solid rgba(59,130,246,0.12)",
+              background: "var(--sidebar-accent)",
+              border: "1px solid var(--border)",
             }}
           >
-            <Sparkles className="h-3.5 w-3.5 animate-pulse shrink-0 text-blue-600" />
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
             <div className="flex-1 min-w-0">
-              <p className="text-[9px] font-black uppercase tracking-wider leading-none text-blue-700">AI Core Active</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <p className="text-[8px] font-semibold text-blue-500">Gemini 2.5 Flash · Online</p>
-              </div>
+               <p className="text-[9px] font-black uppercase tracking-wider leading-none text-slate-350">Security Guard Active</p>
+               <div className="flex items-center gap-1.5 mt-1">
+                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                 <p className="text-[8px] font-semibold text-slate-400">Automated Policy Check</p>
+               </div>
             </div>
           </div>
         ) : (
           <Tooltip>
             <TooltipTrigger asChild>
               <div
-                className="mx-auto mt-3 h-9 w-9 rounded-xl flex items-center justify-center"
-                style={{
-                  background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
-                  border: "1px solid rgba(59,130,246,0.15)",
-                }}
+                className="mx-auto mt-3 h-9 w-9 rounded-xl flex items-center justify-center bg-[var(--sidebar-accent)] border border-[var(--border)]"
               >
-                <Sparkles className="h-4 w-4 text-blue-600 animate-pulse" />
+                <ShieldCheck className="h-4 w-4 text-emerald-500" />
               </div>
             </TooltipTrigger>
-            <TooltipContent side="right">AI Core Active (Gemini 2.5 Flash)</TooltipContent>
+            <TooltipContent side="right">Security Guard Active</TooltipContent>
           </Tooltip>
         )}
 
@@ -348,24 +344,24 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
         {user && (
           <div className="mt-1">
             {isExpanded ? (
-              <div className="flex items-center gap-2.5 p-2 rounded-xl group hover:bg-white/70 transition-all">
+              <div className="flex items-center gap-2.5 p-2 rounded-xl group hover:bg-slate-800 transition-all border border-transparent hover:border-[var(--border)]">
                 <div
                   className="h-8 w-8 rounded-full flex items-center justify-center text-white font-black text-[10px] shrink-0"
                   style={{
                     background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
-                    boxShadow: "0 2px 8px rgba(99,102,241,0.3)",
+                    boxShadow: "0 2px 8px rgba(99,102,241,0.2)",
                   }}
                 >
                   {userInitials}
                 </div>
                 <div className="flex flex-col justify-center min-w-0 flex-1">
-                  <p className="text-[12px] font-bold truncate leading-none text-slate-800">{user.full_name}</p>
-                  <p className="text-[9px] truncate leading-none mt-0.5 text-slate-400">{user.email}</p>
+                  <p className="text-[12px] font-bold truncate leading-none text-slate-300">{user.full_name}</p>
+                  <p className="text-[9px] truncate leading-none mt-0.5 text-slate-500">{user.email}</p>
                 </div>
                 <button
                   onClick={onLogout}
                   title="Sign out"
-                  className="h-7 w-7 rounded-lg flex items-center justify-center transition-all cursor-pointer shrink-0 text-slate-400 hover:bg-red-50 hover:text-red-500"
+                  className="h-7 w-7 rounded-lg flex items-center justify-center transition-all cursor-pointer shrink-0 text-slate-400 hover:bg-red-950/20 hover:text-red-400"
                 >
                   <LogOut className="h-3.5 w-3.5" />
                 </button>
@@ -378,7 +374,7 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
                     className="mx-auto flex h-9 w-9 items-center justify-center rounded-full text-white font-black text-[10px] shrink-0 cursor-pointer transition-all duration-300"
                     style={{
                       background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
-                      boxShadow: "0 2px 8px rgba(99,102,241,0.3)",
+                      boxShadow: "0 2px 8px rgba(99,102,241,0.2)",
                     }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)";
@@ -386,7 +382,7 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)";
-                      (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(99,102,241,0.3)";
+                      (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(99,102,241,0.2)";
                     }}
                   >
                     {userInitials}
