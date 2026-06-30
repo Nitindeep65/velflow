@@ -203,30 +203,35 @@ export default function TemplatesPage() {
       {/* ── STEP 1: TEMPLATE CARDS LIST ── */}
       {step === "list" && (
         <div className="space-y-6">
-          <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-              <PenTool className="h-6 w-6 text-blue-600 animate-pulse" />
-              Smart Clause Wizard
-            </h1>
-            <p className="text-xs text-slate-500 font-semibold mt-1">
-              Select a pre-approved legal structure, enter deal parameters, and draft with AI.
-            </p>
+          <div className="p-6 bg-white border border-slate-100 rounded-2xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+                <PenTool className="h-5 w-5 text-indigo-600 animate-pulse" />
+                Smart Clause Wizard
+              </h1>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                Select a pre-approved legal structure, enter deal parameters, and draft with AI.
+              </p>
+            </div>
+            <div className="text-[10px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100/50 px-3 py-1 rounded-xl">
+              Step 1 of 3
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {TEMPLATES.map((tmpl) => (
               <div
                 key={tmpl.id}
-                className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+                className="bg-white border border-slate-100 hover:border-slate-200/80 rounded-2xl p-5 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group cursor-default"
               >
                 <div className="space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase text-blue-600 bg-blue-50 border border-blue-100/50 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-black uppercase text-blue-600 bg-blue-50 border border-blue-100/50 px-2.5 py-0.5 rounded-lg">
                       {tmpl.type}
                     </span>
                     <span className="text-[10px] text-slate-400 font-bold uppercase">{tmpl.version}</span>
                   </div>
-                  <h3 className="text-sm font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-sm font-bold text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors">
                     {tmpl.name}
                   </h3>
                   <p className="text-xs text-slate-500 leading-relaxed font-semibold">
@@ -234,13 +239,13 @@ export default function TemplatesPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
-                  <span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">
+                <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-50">
+                  <span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
                     {tmpl.risk}
                   </span>
                   <button
                     onClick={() => handleSelectTemplate(tmpl)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-slate-700 hover:text-white border border-slate-200 hover:bg-slate-800 hover:border-slate-800 rounded-xl transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-bold text-slate-700 hover:text-white border border-slate-200 hover:bg-slate-900 hover:border-slate-900 rounded-xl transition-all cursor-pointer"
                   >
                     Draft
                     <ArrowRight className="h-3 w-3" />
@@ -255,21 +260,26 @@ export default function TemplatesPage() {
       {/* ── STEP 2: VARIABLE FILL FORM ── */}
       {step === "form" && activeTemplate && (
         <div className="space-y-6">
-          <button
-            onClick={() => setStep("list")}
-            className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-900 cursor-pointer"
-          >
-            <ChevronLeft className="h-4 w-4" /> Back to templates
-          </button>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setStep("list")}
+              className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-900 cursor-pointer"
+            >
+              <ChevronLeft className="h-4 w-4" /> Back to templates
+            </button>
+            <div className="text-[10px] font-black uppercase bg-indigo-50 text-indigo-600 border border-indigo-100/50 px-3 py-1 rounded-xl">
+              Step 2 of 3
+            </div>
+          </div>
 
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm max-w-lg mx-auto">
-            <h2 className="text-base font-black text-slate-900 tracking-tight">Configure variables: {activeTemplate.name}</h2>
+          <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] max-w-lg mx-auto">
+            <h2 className="text-base font-extrabold text-slate-900 tracking-tight">Configure variables: {activeTemplate.name}</h2>
             <p className="text-xs text-slate-500 mt-0.5 font-medium">Input deal attributes. AI will structure standard legal clauses.</p>
             
             <form onSubmit={handleGenerateDraft} className="space-y-4 mt-5">
               {activeTemplate.fields.map((f) => (
                 <div key={f.key} className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
                     {f.label} <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -278,20 +288,20 @@ export default function TemplatesPage() {
                     value={formVariables[f.key] || ""}
                     onChange={(e) => handleFieldChange(f.key, e.target.value)}
                     placeholder={f.placeholder}
-                    className="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+                    className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:border-indigo-400 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-semibold animate-fade-in"
                   />
                 </div>
               ))}
 
-              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-50">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
                     Link CRM Counterparty
                   </label>
                   <select
                     value={linkedCounterpartyId}
                     onChange={(e) => setLinkedCounterpartyId(e.target.value)}
-                    className="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+                    className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-indigo-400 transition-all font-semibold"
                   >
                     <option value="">-- No linked contact --</option>
                     {counterparties.map((cp) => (
@@ -303,13 +313,13 @@ export default function TemplatesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
                     Link CRM Deal Pipeline
                   </label>
                   <select
                     value={linkedPipelineId}
                     onChange={(e) => setLinkedPipelineId(e.target.value)}
-                    className="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+                    className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-indigo-400 transition-all font-semibold"
                   >
                     <option value="">-- No linked deal --</option>
                     {pipelines.map((p) => (
@@ -332,7 +342,7 @@ export default function TemplatesPage() {
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold cursor-pointer flex items-center gap-2 shadow-md shadow-blue-200 rounded-xl"
+                  className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:opacity-95 text-white font-bold cursor-pointer flex items-center gap-2 shadow-sm shadow-indigo-100 rounded-xl px-4 py-2 text-xs"
                 >
                   <Sparkles className="h-4 w-4" />
                   Generate AI Draft
@@ -346,7 +356,7 @@ export default function TemplatesPage() {
       {/* ── STEP 3: PREVIEW & CUSTOMIZE DRAFT ── */}
       {step === "preview" && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
               <button
                 onClick={() => setStep("form")}
@@ -355,7 +365,7 @@ export default function TemplatesPage() {
               >
                 <ChevronLeft className="h-4 w-4" /> Adjust fields
               </button>
-              <h2 className="text-base font-black text-slate-900 mt-2">Generated Draft</h2>
+              <h2 className="text-base font-extrabold text-slate-900 mt-2">Generated Draft</h2>
             </div>
             
             <div className="flex items-center gap-2">
@@ -364,7 +374,7 @@ export default function TemplatesPage() {
                 size="sm"
                 onClick={() => setIsEditingMode(!isEditingMode)}
                 disabled={isDrafting}
-                className="h-8 text-xs font-bold text-slate-600 hover:text-slate-900 border-slate-200 cursor-pointer flex items-center gap-1.5"
+                className="h-9 text-xs font-bold text-slate-600 hover:text-slate-950 border-slate-200 cursor-pointer flex items-center gap-1.5 rounded-xl"
               >
                 <FileCode className="h-3.5 w-3.5" />
                 {isEditingMode ? "View Rendered" : "Edit Source"}
@@ -373,7 +383,7 @@ export default function TemplatesPage() {
                 size="sm"
                 onClick={handleSaveToCrm}
                 disabled={isDrafting || isSaving || !generatedDraft}
-                className="h-8 text-xs font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white cursor-pointer flex items-center gap-1.5 shadow-md shadow-emerald-100 rounded-xl"
+                className="h-9 text-xs font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 hover:opacity-95 text-white cursor-pointer flex items-center gap-1.5 shadow-sm shadow-emerald-100 rounded-xl"
               >
                 <Save className="h-3.5 w-3.5" />
                 {isSaving ? "Saving..." : "Link & Save to CRM"}
@@ -382,28 +392,28 @@ export default function TemplatesPage() {
           </div>
 
           {isDrafting ? (
-            <div className="h-96 border border-slate-200 bg-white rounded-2xl flex flex-col items-center justify-center p-8 text-slate-400 space-y-4">
-              <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
+            <div className="h-96 border border-slate-100 bg-white rounded-2xl flex flex-col items-center justify-center p-8 text-slate-400 space-y-4 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)]">
+              <div className="h-8 w-8 animate-spin rounded-full border-3 border-indigo-600 border-t-transparent" />
               <div className="text-center">
-                <p className="text-sm font-black text-slate-800">Drafting Agreement clauses...</p>
+                <p className="text-sm font-bold text-slate-800">Drafting Agreement clauses...</p>
                 <p className="text-xs text-slate-400 mt-1 font-semibold">Legal AI engine is engineering boilerplate parameters.</p>
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {/* Draft Name Editable Field */}
-              <div className="bg-slate-50 p-4 border border-slate-200/50 rounded-xl flex items-center gap-3">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Contract Name:</span>
+              <div className="bg-slate-50 p-4 border border-slate-100 rounded-xl flex items-center gap-3">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-wide">Contract Name:</span>
                 <input
                   type="text"
                   value={draftName}
                   onChange={(e) => setDraftName(e.target.value)}
-                  className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-black text-slate-800 focus:outline-none focus:border-blue-500"
+                  className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-400"
                 />
               </div>
 
               {/* Document Editor/Preview canvas */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm min-h-[500px]">
+              <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] min-h-[500px]">
                 {isEditingMode ? (
                   <textarea
                     value={generatedDraft}

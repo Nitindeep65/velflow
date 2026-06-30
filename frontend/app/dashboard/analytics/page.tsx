@@ -183,21 +183,21 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/20 p-6 md:p-8">
+    <div className="p-6 max-w-7xl mx-auto space-y-6 select-none">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex items-start justify-between mb-8 p-6 bg-white border border-slate-100 rounded-2xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] animate-fade-slide-up">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-200">
             <BarChart3 className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-black text-slate-900 tracking-tight">Analytics</h1>
-            <p className="text-xs text-slate-500 mt-0.5">Contract portfolio insights &amp; reporting</p>
+            <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">Analytics</h1>
+            <p className="text-xs text-slate-500 mt-1 font-medium">Contract portfolio insights &amp; reporting</p>
           </div>
         </div>
         <button
           onClick={exportCsv}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition h-9 cursor-pointer"
         >
           <Download className="w-3.5 h-3.5" />
           Export CSV
@@ -207,16 +207,16 @@ export default function AnalyticsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         {summaryCards.map((card) => (
-          <div key={card.label} className={`bg-gradient-to-br ${card.bg} rounded-2xl border ${card.border} p-4 shadow-sm flex flex-col gap-2`}>
+          <div key={card.label} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] flex flex-col gap-2 hover:-translate-y-0.5 transition-transform duration-300">
             <div className="flex items-center justify-between">
-              <card.icon className={`w-4 h-4 ${card.color}`} />
-              {card.trend === "up" && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
+              <card.icon className={`w-4.5 h-4.5 ${card.color}`} />
+              {card.trend === "up" && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />}
               {card.trend === "down" && <ArrowDownRight className="w-3.5 h-3.5 text-red-400" />}
               {!card.trend && <Minus className="w-3.5 h-3.5 text-slate-300" />}
             </div>
             <div>
               <p className="text-2xl font-black text-slate-900 leading-none">{card.value}</p>
-              <p className="text-[10px] text-slate-500 font-medium mt-1">{card.label}</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide mt-1.5">{card.label}</p>
             </div>
           </div>
         ))}
@@ -225,11 +225,11 @@ export default function AnalyticsPage() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {/* Signing Velocity */}
-        <div className="md:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <div className="md:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-sm font-bold text-slate-900">Contract Volume</h2>
-              <p className="text-[10px] text-slate-400 mt-0.5">Contracts uploaded per month this year</p>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Contracts uploaded per month this year</p>
             </div>
             <TrendingUp className="w-4 h-4 text-indigo-400" />
           </div>
@@ -241,11 +241,11 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Contract Type Donut */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-sm font-bold text-slate-900">Contract Types</h2>
-              <p className="text-[10px] text-slate-400 mt-0.5">By category</p>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">By category</p>
             </div>
           </div>
           {typeBreakdown.length > 0 ? (
@@ -258,11 +258,11 @@ export default function AnalyticsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Risk Breakdown */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-sm font-bold text-slate-900">Risk Distribution</h2>
-              <p className="text-[10px] text-slate-400 mt-0.5">Portfolio risk profile</p>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Portfolio risk profile</p>
             </div>
             <AlertTriangle className="w-4 h-4 text-amber-400" />
           </div>
@@ -270,11 +270,11 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Top Counterparties */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-sm font-bold text-slate-900">Top Counterparties</h2>
-              <p className="text-[10px] text-slate-400 mt-0.5">By contract count</p>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">By contract count</p>
             </div>
             <Users className="w-4 h-4 text-cyan-400" />
           </div>
@@ -301,8 +301,8 @@ export default function AnalyticsPage() {
               })}
             </div>
           )}
-        </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

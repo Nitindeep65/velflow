@@ -54,38 +54,27 @@ interface StatCardProps {
 function StatCard({ label, value, sub, icon: Icon, gradient, glowColor, delay = 0 }: StatCardProps) {
   return (
     <div
-      className="relative overflow-hidden rounded-2xl p-5 group cursor-default animate-fade-slide-up transition-all duration-300 hover:-translate-y-0.5"
+      className="relative overflow-hidden rounded-2xl p-6 bg-white border border-slate-100 hover:border-slate-200/80 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05),0_10px_20px_-8px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group cursor-default animate-fade-slide-up"
       style={{
-        background: "white",
-        border: "1px solid rgba(226,232,240,0.8)",
-        boxShadow: "0 1px 3px rgba(15,23,42,0.04)",
         animationDelay: `${delay}ms`,
-      }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 24px ${glowColor}`;
-        (e.currentTarget as HTMLElement).style.borderColor = "rgba(148,163,184,0.3)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 3px rgba(15,23,42,0.04)";
-        (e.currentTarget as HTMLElement).style.borderColor = "rgba(226,232,240,0.8)";
       }}
     >
       {/* Top gradient bar */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: gradient }} />
+      <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style={{ background: gradient }} />
 
       {/* Background glow */}
-      <div className="absolute -top-6 -right-6 h-20 w-20 rounded-full opacity-[0.06] transition-opacity duration-300 group-hover:opacity-[0.1]"
-        style={{ background: gradient, filter: "blur(16px)" }} />
+      <div className="absolute -top-6 -right-6 h-24 w-24 rounded-full opacity-[0.03] transition-all duration-500 group-hover:scale-125 group-hover:opacity-[0.08]"
+        style={{ background: gradient, filter: "blur(20px)" }} />
 
       <div className="flex items-start justify-between relative z-10">
-        <div className="space-y-1.5">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-          <p className="text-3xl font-black leading-none text-slate-900">{value}</p>
-          <p className="text-[11px] font-medium text-slate-500">{sub}</p>
+        <div className="space-y-2">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-sans">{label}</p>
+          <p className="text-3xl font-extrabold tracking-tight text-slate-900 font-sans leading-none">{value}</p>
+          <p className="text-[11px] font-medium text-slate-500 font-sans mt-1.5">{sub}</p>
         </div>
-        <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
+        <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-115"
           style={{ background: `${glowColor.replace("0.1", "0.08")}`, border: `1px solid ${glowColor.replace("0.1", "0.15")}` }}>
-          <Icon className="h-4.5 w-4.5" style={{ color: gradient.includes("59,130,246") ? "#2563eb" : gradient.includes("239,68,68") || gradient.includes("225,29,72") ? "#dc2626" : gradient.includes("245,158,11") ? "#d97706" : "#059669" }} />
+          <Icon className="h-4.5 w-4.5" style={{ color: gradient.includes("59,130,246") ? "#3b82f6" : (gradient.includes("239,68,68") || gradient.includes("225,29,72")) ? "#ef4444" : gradient.includes("245,158,11") ? "#f59e0b" : "#10b981" }} />
         </div>
       </div>
     </div>
@@ -236,18 +225,18 @@ export default function DashboardHome() {
     <div className="p-6 max-w-7xl mx-auto space-y-6 select-none">
 
       {/* ── Hero Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-slide-up">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white border border-slate-100 rounded-2xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] animate-fade-slide-up">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black tracking-tight text-slate-900">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-xl font-extrabold tracking-tight text-slate-900">
               {greeting ? greeting.text : "Welcome back"}
             </h2>
-            {greeting && <span className="text-xl">{greeting.emoji}</span>}
+            {greeting && <span className="text-xl transition-transform duration-300 hover:rotate-12 cursor-default">{greeting.emoji}</span>}
           </div>
-          <p className="text-xs text-slate-500 mt-1 font-medium">
+          <p className="text-xs text-slate-500 mt-1.5 font-medium leading-relaxed">
             {stats.total > 0
-              ? `Velflow AI has analyzed ${stats.analyzed} of ${stats.total} agreement${stats.total !== 1 ? "s" : ""}.`
-              : "Upload your first contract to begin AI-powered review."}
+              ? `VelFlow AI has audited and processed ${stats.analyzed} of ${stats.total} active document${stats.total !== 1 ? "s" : ""}.`
+              : "Upload your first contract to get started with instant AI metadata analysis."}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -256,7 +245,7 @@ export default function DashboardHome() {
             size="sm"
             onClick={() => fetchContracts()}
             disabled={isLoading}
-            className="h-8 text-slate-600 hover:text-slate-900 border-slate-200 cursor-pointer text-xs font-semibold px-3 flex items-center gap-1.5 shadow-sm"
+            className="h-9 text-slate-600 hover:text-slate-950 border-slate-200 cursor-pointer text-xs font-semibold px-4 flex items-center gap-2 shadow-xs transition-colors rounded-xl"
           >
             <RefreshCcw className={cn("h-3.5 w-3.5", isLoading && "animate-spin")} />
             Sync
@@ -265,8 +254,8 @@ export default function DashboardHome() {
             <Button
               size="sm"
               onClick={restoreDefaults}
-              className="h-8 text-xs font-bold px-3 flex items-center gap-1.5 cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)", boxShadow: "0 2px 8px rgba(59,130,246,0.25)", color: "white" }}
+              className="h-9 text-xs font-bold px-4 flex items-center gap-2 cursor-pointer rounded-xl hover:opacity-95 transition-opacity"
+              style={{ background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)", boxShadow: "0 4px 14px rgba(59,130,246,0.25)", color: "white" }}
             >
               <FolderSync className="h-3.5 w-3.5" />
               Load Demo
@@ -295,20 +284,19 @@ export default function DashboardHome() {
       </div>
 
       {/* ── Main 2-Column Grid ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* ── Left Column (7 cols) ── */}
-        <div className="lg:col-span-7 space-y-5">
+        <div className="lg:col-span-7 space-y-6">
 
           {/* Upload Zone Card */}
-          <div className="rounded-2xl overflow-hidden animate-fade-slide-up"
-            style={{ background: "white", border: "1px solid rgba(226,232,240,0.8)", boxShadow: "0 1px 3px rgba(15,23,42,0.04)", animationDelay: "200ms" }}>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] overflow-hidden animate-fade-slide-up"
+            style={{ animationDelay: "200ms" }}>
 
             {/* Card Header */}
-            <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f5f9" }}>
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)", border: "1px solid rgba(59,130,246,0.12)" }}>
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-blue-50 border border-blue-100">
                   <Sparkles className="h-4 w-4 text-blue-600" />
                 </div>
                 <div>
@@ -316,8 +304,7 @@ export default function DashboardHome() {
                   <p className="text-[11px] text-slate-500 font-medium">Drop a contract to extract risks, timelines, and key terms</p>
                 </div>
               </div>
-              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                style={{ background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)", border: "1px solid rgba(59,130,246,0.12)" }}>
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50/50 border border-blue-100">
                 <Zap className="h-3 w-3 text-blue-500" />
                 <span className="text-[9px] font-black text-blue-600 uppercase tracking-wider">Instant</span>
               </div>
@@ -332,18 +319,14 @@ export default function DashboardHome() {
                 onDrop={handleDrop}
                 onClick={() => !isUploading && fileInputRef.current?.click()}
                 className={cn(
-                  "rounded-xl p-8 text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center min-h-[180px] relative select-none",
+                  "rounded-xl p-8 text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center min-h-[180px] relative select-none border-2 border-dashed",
                   dragActive
-                    ? "shadow-inner"
+                    ? "border-blue-500 bg-blue-50/30"
                     : file
-                    ? ""
-                    : "",
+                    ? "border-blue-300 bg-blue-50/10"
+                    : "border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-300",
                   isUploading && "pointer-events-none"
                 )}
-                style={{
-                  border: dragActive ? "2px dashed #3b82f6" : file ? "2px dashed #93c5fd" : "2px dashed #e2e8f0",
-                  background: dragActive ? "linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%)" : file ? "#f0f9ff" : "#fafafa",
-                }}
               >
                 <input ref={fileInputRef} type="file" accept=".pdf,.docx" onChange={handleFileChange} className="hidden" disabled={isUploading} />
 
@@ -412,11 +395,10 @@ export default function DashboardHome() {
           </div>
 
           {/* Risk Distribution Card */}
-          <div className="rounded-2xl overflow-hidden animate-fade-slide-up"
-            style={{ background: "white", border: "1px solid rgba(226,232,240,0.8)", boxShadow: "0 1px 3px rgba(15,23,42,0.04)", animationDelay: "260ms" }}>
-            <div className="px-5 py-4 flex items-center gap-2.5" style={{ borderBottom: "1px solid #f1f5f9" }}>
-              <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-                style={{ background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)", border: "1px solid rgba(59,130,246,0.12)" }}>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] overflow-hidden animate-fade-slide-up"
+            style={{ animationDelay: "260ms" }}>
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-blue-50 border border-blue-100">
                 <BarChart3 className="h-4 w-4 text-blue-600" />
               </div>
               <div>
@@ -473,12 +455,11 @@ export default function DashboardHome() {
         <div className="lg:col-span-5 space-y-5">
 
           {/* Recent Agreements */}
-          <div className="rounded-2xl overflow-hidden animate-fade-slide-up"
-            style={{ background: "white", border: "1px solid rgba(226,232,240,0.8)", boxShadow: "0 1px 3px rgba(15,23,42,0.04)", animationDelay: "240ms" }}>
-            <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f5f9" }}>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] overflow-hidden animate-fade-slide-up"
+            style={{ animationDelay: "240ms" }}>
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)", border: "1px solid rgba(59,130,246,0.12)" }}>
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-blue-50 border border-blue-100">
                   <Files className="h-4 w-4 text-blue-600" />
                 </div>
                 <h3 className="text-sm font-bold text-slate-900">Recent Agreements</h3>
@@ -500,15 +481,12 @@ export default function DashboardHome() {
                     <div
                       key={contract.id}
                       onClick={() => router.push(`/dashboard/contracts/${contract.id}`)}
-                      className="px-3 py-3 rounded-xl flex items-center justify-between gap-3 transition-all cursor-pointer group"
+                      className="px-3 py-3 rounded-xl flex items-center justify-between gap-3 transition-colors duration-150 cursor-pointer hover:bg-slate-50/70 group"
                       style={{ animationDelay: `${idx * 40}ms` }}
-                      onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = "#f8fafc"}
-                      onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = "transparent"}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         {/* Rank */}
-                        <div className="h-6 w-6 rounded-md flex items-center justify-center text-[9px] font-black text-slate-400 shrink-0"
-                          style={{ background: "#f1f5f9" }}>
+                        <div className="h-6 w-6 rounded-md flex items-center justify-center text-[9px] font-black text-slate-400 shrink-0 bg-slate-50">
                           {idx + 1}
                         </div>
                         {/* Risk bar */}
@@ -531,11 +509,10 @@ export default function DashboardHome() {
           </div>
 
           {/* Upcoming Milestones */}
-          <div className="rounded-2xl overflow-hidden animate-fade-slide-up"
-            style={{ background: "white", border: "1px solid rgba(226,232,240,0.8)", boxShadow: "0 1px 3px rgba(15,23,42,0.04)", animationDelay: "300ms" }}>
-            <div className="px-5 py-4 flex items-center gap-2.5" style={{ borderBottom: "1px solid #f1f5f9" }}>
-              <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-                style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", border: "1px solid rgba(16,185,129,0.12)" }}>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] overflow-hidden animate-fade-slide-up"
+            style={{ animationDelay: "300ms" }}>
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-emerald-50 border border-emerald-100">
                 <Calendar className="h-4 w-4 text-emerald-600" />
               </div>
               <div>
@@ -550,7 +527,7 @@ export default function DashboardHome() {
                   <p className="text-xs text-slate-400 font-medium">No upcoming deadlines scheduled.</p>
                 </div>
               ) : (
-                <div className="relative pl-4 space-y-5" style={{ borderLeft: "2px solid #f1f5f9" }}>
+                <div className="relative pl-4 space-y-5 border-l-2 border-slate-100">
                   {upcomingMilestones.slice(0, 4).map((item, idx) => {
                     const daysUntil = getDaysUntil(item.dateStr);
                     const isCritical = item.badge?.includes("Critical");
@@ -594,12 +571,11 @@ export default function DashboardHome() {
           </div>
 
           {/* AI Obligation Checklist */}
-          <div className="rounded-2xl overflow-hidden animate-fade-slide-up"
-            style={{ background: "white", border: "1px solid rgba(226,232,240,0.8)", boxShadow: "0 1px 3px rgba(15,23,42,0.04)", animationDelay: "340ms" }}>
-            <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f5f9" }}>
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] overflow-hidden animate-fade-slide-up"
+            style={{ animationDelay: "340ms" }}>
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)", border: "1px solid rgba(59,130,246,0.12)" }}>
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-blue-50 border border-blue-100">
                   <CheckCircle2 className="h-4 w-4 text-blue-600" />
                 </div>
                 <div>

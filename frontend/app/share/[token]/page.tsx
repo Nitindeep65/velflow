@@ -382,13 +382,13 @@ export default function GuestSharePage({ params }: SharePageProps) {
       {/* ── Modal: E-Sign Contract ── */}
       {isSigningOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-slide-up">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsSigningOpen(false)} />
-          <div className="bg-white rounded-2xl border border-slate-200/80 w-full max-w-md relative z-10 shadow-2xl overflow-hidden animate-scale-in">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-xs" onClick={() => setIsSigningOpen(false)} />
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-100 w-full max-w-md relative z-10 shadow-2xl overflow-hidden animate-scale-in">
             {/* Header */}
             <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between">
               <div>
-                <h2 className="text-base font-black text-slate-950">E-Sign Agreement</h2>
-                <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                <h2 className="text-base font-black text-slate-900">E-Sign Agreement</h2>
+                <p className="text-xs text-slate-400 mt-0.5 font-medium">
                   Review and sign. A tamper-proof cryptographic audit trail will be logged.
                 </p>
               </div>
@@ -403,7 +403,7 @@ export default function GuestSharePage({ params }: SharePageProps) {
             <form onSubmit={handleSignContract} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -415,12 +415,12 @@ export default function GuestSharePage({ params }: SharePageProps) {
                       if (signatureType === "type") setTypedSignature(e.target.value);
                     }}
                     placeholder="e.g. John Doe"
-                    className="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+                    className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 transition-all font-semibold"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
                     Email Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -429,27 +429,24 @@ export default function GuestSharePage({ params }: SharePageProps) {
                     value={signerEmail}
                     onChange={(e) => setSignerEmail(e.target.value)}
                     placeholder="e.g. john@doe.com"
-                    className="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium"
+                    className="block w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 transition-all font-semibold"
                   />
                 </div>
               </div>
 
               {/* Typographic signature input */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">
                   Signature Style
                 </label>
-                <div className="h-28 border border-slate-200 rounded-xl bg-slate-50 flex items-center justify-center text-center relative select-none">
+                <div className="h-28 border border-slate-200 rounded-xl bg-slate-50/50 flex flex-col items-center justify-center font-serif text-2xl italic text-indigo-700 tracking-wide border-dashed relative overflow-hidden select-none">
+                  <div className="absolute top-1 left-2 text-[8px] font-mono text-slate-400 not-italic uppercase tracking-widest">e-signature certificate</div>
+                  <span className="font-sans font-semibold text-slate-900/10 text-5xl absolute select-none tracking-tighter">VelFlow E-Sign</span>
                   {signerName ? (
-                    <span className="font-extrabold text-2xl text-blue-700 italic font-serif tracking-wide select-none">
-                      {signerName}
-                    </span>
+                    <span className="relative z-10 font-serif italic">{signerName}</span>
                   ) : (
-                    <span className="text-slate-400 text-[11px] font-semibold">Enter your name above to generate signature</span>
+                    <span className="text-slate-400 text-xs font-semibold relative z-10 not-italic">Enter name above to generate e-sign</span>
                   )}
-                  <span className="absolute bottom-2 right-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    Typographic E-Sign
-                  </span>
                 </div>
               </div>
 
@@ -458,14 +455,14 @@ export default function GuestSharePage({ params }: SharePageProps) {
                   type="button"
                   onClick={() => setIsSigningOpen(false)}
                   disabled={isSubmittingSignature}
-                  className="px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 font-semibold cursor-pointer text-xs"
+                  className="px-4 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 font-semibold cursor-pointer text-xs border border-slate-200 bg-white"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingSignature || !signerName || !signerEmail}
-                  className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-emerald-200 cursor-pointer"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-emerald-200 cursor-pointer"
                 >
                   {isSubmittingSignature ? "Signing..." : "Verify & Sign"}
                 </button>

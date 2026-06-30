@@ -209,23 +209,26 @@ export default function PlaybookPage() {
 
       {/* Add Rule Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs px-4">
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-100 shadow-2xl w-full max-w-md p-6 animate-scale-in">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-base font-black text-slate-900">Add Playbook Rule</h3>
-              <button onClick={() => setShowAddModal(false)} className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center">
+              <div>
+                <h3 className="text-base font-black text-slate-900">Add Playbook Rule</h3>
+                <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Create a company standard compliance directive</p>
+              </div>
+              <button onClick={() => setShowAddModal(false)} className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                 <X className="w-4 h-4 text-slate-500" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Rule Category *</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1.5">Rule Category *</label>
                 <input
                   value={form.rule_category}
                   onChange={(e) => setForm((f) => ({ ...f, rule_category: e.target.value }))}
                   placeholder="e.g., Governing Law"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:border-indigo-400 transition-colors font-semibold"
                   list="category-suggestions"
                 />
                 <datalist id="category-suggestions">
@@ -234,34 +237,34 @@ export default function PlaybookPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Required Terms (comma-separated)</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1.5">Required Terms (comma-separated)</label>
                 <input
                   value={form.preferred_terms}
                   onChange={(e) => setForm((f) => ({ ...f, preferred_terms: e.target.value }))}
                   placeholder="e.g., Delaware, New York"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:border-indigo-400 transition-colors font-semibold"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Forbidden Terms (comma-separated)</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1.5">Forbidden Terms (comma-separated)</label>
                 <input
                   value={form.forbidden_terms}
                   onChange={(e) => setForm((f) => ({ ...f, forbidden_terms: e.target.value }))}
                   placeholder="e.g., unlimited liability, perpetual"
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:border-indigo-400 transition-colors font-semibold"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Risk Level</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1.5">Risk Level</label>
                 <div className="flex gap-2">
                   {(["High", "Medium", "Low"] as const).map((level) => (
                     <button
                       key={level}
                       onClick={() => setForm((f) => ({ ...f, risk_level: level }))}
-                      className={`flex-1 py-2 rounded-xl text-xs font-semibold transition border ${
-                        form.risk_level === level ? RISK_COLORS[level] : "border-slate-200 text-slate-400 hover:border-slate-300"
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition border ${
+                        form.risk_level === level ? RISK_COLORS[level] : "border-slate-200 text-slate-400 bg-white hover:border-slate-300"
                       }`}
                     >
                       {level}
@@ -271,17 +274,17 @@ export default function PlaybookPage() {
               </div>
             </div>
 
-            <div className="flex gap-2 mt-6">
+            <div className="flex gap-2.5 mt-6">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition bg-white"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreate}
                 disabled={!form.rule_category.trim()}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-40"
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-xs font-bold hover:opacity-95 transition disabled:opacity-40 shadow-sm shadow-indigo-100"
               >
                 Add Rule
               </button>
@@ -292,25 +295,27 @@ export default function PlaybookPage() {
 
       {/* Compliance Check Modal */}
       {showCheckModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs px-4">
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-100 shadow-2xl w-full max-w-lg p-6 max-h-[85vh] overflow-y-auto animate-scale-in">
             <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4.5 h-4.5 text-indigo-500" size={18} />
-                <h3 className="text-base font-black text-slate-900">Run Compliance Check</h3>
+              <div>
+                <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-indigo-500 animate-pulse" />
+                  Run Compliance Check
+                </h3>
+                <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Verify your document alignment against active rules</p>
               </div>
-              <button onClick={() => setShowCheckModal(false)} className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center">
+              <button onClick={() => setShowCheckModal(false)} className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                 <X className="w-4 h-4 text-slate-500" />
               </button>
             </div>
 
             {!complianceResult ? (
               <>
-                <p className="text-xs text-slate-500 mb-4">Select a contract to check against all {playbooks.length} playbook rules.</p>
                 <select
                   value={selectedContractId ?? ""}
                   onChange={(e) => setSelectedContractId(Number(e.target.value))}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200 mb-4"
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-900 bg-slate-50 focus:outline-none focus:border-indigo-400 font-semibold mb-4"
                 >
                   <option value="">Select a contract…</option>
                   {contracts.map((c) => (
@@ -320,12 +325,12 @@ export default function PlaybookPage() {
                 <button
                   onClick={handleCheck}
                   disabled={!selectedContractId || isChecking || playbooks.length === 0}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-40"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-xs font-bold hover:opacity-95 transition disabled:opacity-40 shadow-sm"
                 >
                   {isChecking ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Analyzing with AI…
+                      <div className="w-4 h-4 border-2 border-white/35 border-t-white rounded-full animate-spin" />
+                      Auditing via AI…
                     </>
                   ) : (
                     <>
@@ -335,7 +340,7 @@ export default function PlaybookPage() {
                   )}
                 </button>
                 {playbooks.length === 0 && (
-                  <p className="text-xs text-amber-500 text-center mt-2">Add at least one playbook rule before running a check.</p>
+                  <p className="text-xs text-amber-600 font-medium text-center mt-2">Add at least one playbook rule before running a check.</p>
                 )}
               </>
             ) : (
@@ -351,19 +356,19 @@ export default function PlaybookPage() {
                 )}
 
                 {complianceResult.violations.length === 0 ? (
-                  <div className="text-center py-6 text-slate-400 text-sm">
+                  <div className="text-center py-6 text-slate-400 text-sm font-medium">
                     ✅ No violations found — contract is fully compliant!
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-1">
                     {complianceResult.violations.map((v, idx) => (
-                      <div key={idx} className="bg-slate-50 rounded-xl p-3.5 border border-slate-100">
-                        <div className="flex items-center justify-between mb-1.5">
+                      <div key={idx} className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 space-y-1">
+                        <div className="flex items-center justify-between mb-1">
                           <span className="text-xs font-bold text-slate-700">{v.rule_category}</span>
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${RISK_COLORS[v.severity]}`}>{v.severity}</span>
                         </div>
-                        <p className="text-xs text-slate-600 mb-1.5">{v.violation}</p>
-                        <p className="text-[10px] text-slate-400 font-mono bg-white rounded-lg px-2.5 py-1.5 border border-slate-200 line-clamp-2">
+                        <p className="text-xs text-slate-600 leading-normal">{v.violation}</p>
+                        <p className="text-[10px] text-slate-400 font-mono bg-white rounded-lg px-2.5 py-1.5 border border-slate-200 line-clamp-2 leading-relaxed">
                           {v.clause_text}
                         </p>
                       </div>
@@ -373,7 +378,7 @@ export default function PlaybookPage() {
 
                 <button
                   onClick={() => { clearComplianceResult(); setSelectedContractId(null); }}
-                  className="w-full mt-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                  className="w-full mt-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition bg-white"
                 >
                   Run Another Check
                 </button>

@@ -56,50 +56,50 @@ function ContractGridCard({
 }) {
   const router = useRouter();
   const riskColor = {
-    High: "border-red-200 bg-red-50/30",
-    Medium: "border-amber-200 bg-amber-50/30",
-    Low: "border-emerald-200 bg-emerald-50/30",
-  }[contract.risk as string] ?? "border-zinc-200";
+    High: "border-red-100 hover:border-red-200",
+    Medium: "border-amber-100 hover:border-amber-200",
+    Low: "border-emerald-100 hover:border-emerald-200",
+  }[contract.risk as string] ?? "border-slate-100 hover:border-slate-200";
 
   const riskStripe = {
-    High: "from-red-500 to-rose-600",
-    Medium: "from-amber-400 to-orange-500",
-    Low: "from-emerald-500 to-teal-500",
-  }[contract.risk as string] ?? "from-zinc-400 to-zinc-500";
+    High: "from-red-500 to-rose-500",
+    Medium: "from-amber-400 to-orange-400",
+    Low: "from-emerald-400 to-teal-500",
+  }[contract.risk as string] ?? "from-slate-400 to-slate-500";
 
   return (
     <div
       className={cn(
-        "bg-white rounded-2xl border overflow-hidden card-shimmer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-zinc-200/80 transition-all duration-300 cursor-pointer group animate-fade-slide-up",
+        "bg-white rounded-2xl border overflow-hidden shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group animate-fade-slide-up",
         riskColor
       )}
       onClick={() => router.push(`/dashboard/contracts/${contract.id}`)}
     >
       {/* Color stripe top */}
-      <div className={`h-0.5 bg-gradient-to-r ${riskStripe}`} />
+      <div className={`h-1 bg-gradient-to-r ${riskStripe}`} />
 
-      <div className="p-4 space-y-3">
+      <div className="p-4.5 space-y-3.5">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
-          <div className="h-9 w-9 rounded-xl bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-400 shrink-0 group-hover:bg-blue-50 group-hover:text-blue-500 group-hover:border-blue-100 transition-all">
-            <FileText className="h-4 w-4" />
+          <div className="h-9 w-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 shrink-0 group-hover:bg-blue-50 group-hover:text-blue-500 group-hover:border-blue-100 transition-all duration-200">
+            <FileText className="h-4.5 w-4.5" />
           </div>
           <RiskBadge risk={contract.risk} showDot={false} className="text-[9px] py-0.5" />
         </div>
 
         {/* Name */}
         <div>
-          <h4 className="text-sm font-bold text-zinc-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+          <h4 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
             {contract.name}
           </h4>
-          <p className="text-[11px] text-zinc-400 font-medium mt-1">
+          <p className="text-[11px] text-slate-400 font-medium mt-1">
             {contract.counterparty}
           </p>
         </div>
 
         {/* Metadata */}
         <div className="flex items-center justify-between">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-zinc-100 text-zinc-500 border border-zinc-200/60">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-50 text-slate-500 border border-slate-100">
             {contract.type}
           </span>
           <StatusPill status={contract.status} className="text-[9px] py-0.5" />
@@ -107,36 +107,36 @@ function ContractGridCard({
 
         {/* Date */}
         {contract.next_date && (
-          <div className="flex items-center gap-1.5 pt-1 border-t border-zinc-100">
-            <Calendar className="h-3 w-3 text-zinc-300 shrink-0" />
-            <span className="text-[10px] font-medium text-zinc-400">{formatDate(contract.next_date)}</span>
+          <div className="flex items-center gap-1.5 pt-3 border-t border-slate-50">
+            <Calendar className="h-3.5 w-3.5 text-slate-300 shrink-0" />
+            <span className="text-[10px] font-medium text-slate-400">{formatDate(contract.next_date)}</span>
           </div>
         )}
       </div>
 
       {/* Actions row */}
-      <div className="px-4 pb-3 flex items-center justify-between gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200" onClick={(e) => e.stopPropagation()}>
+      <div className="px-4.5 pb-3.5 flex items-center justify-between gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 animate-in fade-in" onClick={(e) => e.stopPropagation()}>
         <Link
           href={`/dashboard/contracts/${contract.id}`}
-          className="flex-1 h-7 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
+          className="flex-1 h-8 text-[11px] font-bold text-blue-600 bg-blue-50/50 hover:bg-blue-50 border border-blue-100/50 hover:border-blue-100 rounded-xl flex items-center justify-center gap-1 transition-colors cursor-pointer"
         >
           <Eye className="h-3 w-3" /> View
         </Link>
         <Link
           href={`/dashboard/contracts/${contract.id}?tab=compare`}
-          className="h-7 px-2 text-[11px] font-bold text-zinc-600 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
+          className="h-8 px-2.5 text-[11px] font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200/50 rounded-xl flex items-center justify-center gap-1 transition-colors cursor-pointer"
         >
           <GitCompare className="h-3 w-3" />
         </Link>
         <button
           onClick={() => onDelete(contract.id)}
           disabled={deletingId === contract.id}
-          className="h-7 w-7 rounded-lg hover:bg-red-50 hover:text-red-500 text-zinc-300 flex items-center justify-center transition-all cursor-pointer border border-transparent hover:border-red-100 disabled:opacity-50"
+          className="h-8 w-8 rounded-xl hover:bg-red-50 hover:text-red-500 text-slate-300 flex items-center justify-center transition-all cursor-pointer border border-transparent hover:border-red-100 disabled:opacity-50"
         >
           {deletingId === contract.id ? (
             <RefreshCcw className="h-3 w-3 animate-spin" />
           ) : (
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-3.5 w-3.5" />
           )}
         </button>
       </div>

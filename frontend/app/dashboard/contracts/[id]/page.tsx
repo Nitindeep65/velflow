@@ -1194,13 +1194,16 @@ export default function ContractDetailsPage() {
 
       {/* E-SIGNATURE MODAL */}
       {isSigningOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white border border-zinc-200 rounded-xl w-full max-w-md shadow-2xl overflow-hidden animate-scale-in">
-            <div className="bg-zinc-50 border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
-              <h3 className="text-sm font-black text-zinc-900">E-Sign Agreement</h3>
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-scale-in">
+            <div className="border-b border-slate-100 px-6 py-5 flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-black text-slate-900">E-Sign Agreement</h3>
+                <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Verify your credentials and sign digitally</p>
+              </div>
               <button 
                 onClick={() => setIsSigningOpen(false)}
-                className="h-7 w-7 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 flex items-center justify-center cursor-pointer transition-colors"
+                className="h-7 w-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -1222,45 +1225,47 @@ export default function ContractDetailsPage() {
                 setIsSubmittingSignature(false);
               }
             }} className="p-6 space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Full Name</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Full Name</label>
                 <input 
                   type="text" 
                   required
                   placeholder="e.g. John Doe"
                   value={signerName}
                   onChange={(e) => setSignerName(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 focus:border-blue-500 rounded-lg text-sm font-semibold p-2.5 text-zinc-800 outline-none transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-400 rounded-xl text-sm font-semibold p-2.5 text-slate-800 outline-none transition-colors"
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Email Address</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Email Address</label>
                 <input 
                   type="email" 
                   required
                   placeholder="e.g. john@acme.com"
                   value={signerEmail}
                   onChange={(e) => setSignerEmail(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 focus:border-blue-500 rounded-lg text-sm font-semibold p-2.5 text-zinc-800 outline-none transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-400 rounded-xl text-sm font-semibold p-2.5 text-slate-800 outline-none transition-colors"
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Signature Preview</label>
-                <div className="h-24 border border-zinc-200 rounded-lg bg-zinc-50 flex items-center justify-center font-serif text-xl italic text-blue-700 tracking-wide">
-                  {signerName || "Typographic Signature"}
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Signature Preview</label>
+                <div className="h-24 border border-slate-200 rounded-xl bg-slate-50/50 flex flex-col items-center justify-center font-serif text-2xl italic text-indigo-700 tracking-wide border-dashed relative overflow-hidden">
+                  <div className="absolute top-1 left-2 text-[8px] font-mono text-slate-400 not-italic uppercase tracking-widest">e-signature certificate</div>
+                  <span className="font-sans font-semibold text-slate-900/10 text-5xl absolute select-none tracking-tighter">VelFlow E-Sign</span>
+                  <span className="relative z-10">{signerName || "Typographic Signature"}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex items-center justify-end gap-2.5 pt-2">
                 <Button 
                   type="button" 
                   variant="outline" 
                   size="sm"
                   onClick={() => setIsSigningOpen(false)}
                   disabled={isSubmittingSignature}
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-xl h-9 text-xs font-semibold px-4 border-slate-200 text-slate-500"
                 >
                   Cancel
                 </Button>
@@ -1268,7 +1273,7 @@ export default function ContractDetailsPage() {
                   type="submit" 
                   size="sm"
                   disabled={isSubmittingSignature || !signerName || !signerEmail}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer rounded-xl h-9 text-xs px-4 border-none shadow-sm shadow-emerald-200"
                 >
                   {isSubmittingSignature ? "Signing..." : "Verify & Sign"}
                 </Button>
