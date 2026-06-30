@@ -7,10 +7,11 @@ from app.models.playbook import Playbook
 from app.models.contract import Contract
 from app.schemas.playbook import (
     PlaybookCreate, PlaybookUpdate, PlaybookResponse,
-    PlaybookCheckResponse, PlaybookViolation
+    PlaybookCheckResponse, PlaybookViolation,
+    PlaybookSuggestionRequest, PlaybookSuggestionResponse
 )
 from app.services.auth import get_current_user
-from app.services.ai import check_contract_against_playbook
+from app.services.ai import check_contract_against_playbook, suggest_playbook_alternative
 from app.utils.document import extract_text_from_bytes
 
 router = APIRouter(prefix="/api/playbook", tags=["playbook"])
@@ -124,3 +125,18 @@ def check_contract(
         violations=violations,
         overall_compliance=overall
     )
+
+
+@router.post("/suggest-alternative", response_model=PlaybookSuggestionResponse)
+def suggest_alternative(
+    schema: PlaybookSuggestionRequest,
+    current_user: User = Depends(get_current_user)
+):
+    alternative = suggest_playbook_alternative(
+        rule_category=schema.rule_category,
+        violation=schema.violation,
+        clause_text=schema.clause_text,
+        preferred_terms=schema.preferred_terms,
+        forbidden_terms=schema.forbidden_terms
+    )
+    return PlaybookSuggestionResponse(suggested_alternative=alternative)

@@ -101,6 +101,21 @@ def test_full_playbook_flow():
     assert len(remaining) == 0
     print("   ✅ Rule no longer listed.")
 
+    # 7. Request compliance rephrase suggestions
+    print("\n7. Requesting compliance clause suggestion...")
+    resp = client.post("/api/playbook/suggest-alternative", json={
+        "rule_category": "Governing Law",
+        "violation": "Required term missing: Delaware",
+        "clause_text": "This contract shall be subject to the laws of California.",
+        "preferred_terms": "Delaware",
+        "forbidden_terms": "California"
+    })
+    assert resp.status_code == 200
+    suggestion = resp.json()
+    assert "suggested_alternative" in suggestion
+    assert len(suggestion["suggested_alternative"]) > 0
+    print(f"   ✅ Suggestion generated successfully: '{suggestion['suggested_alternative']}'")
+
     print("\n🎉 ALL PLAYBOOK API TESTS PASSED SUCCESSFULLY! 🎉\n")
 
 

@@ -34,3 +34,13 @@ class PlaybookCheckResponse(BaseModel):
     total_violations: int
     violations: list[PlaybookViolation]
     overall_compliance: str  # "Pass", "Warning", "Fail"
+
+class PlaybookSuggestionRequest(BaseModel):
+    rule_category: str
+    violation: str
+    clause_text: str
+    preferred_terms: Optional[str] = None
+    forbidden_terms: Optional[str] = None
+
+class PlaybookSuggestionResponse(BaseModel):
+    suggested_alternative: str

@@ -15,6 +15,8 @@ import {
   Scale,
   BookOpen,
   Sparkles,
+  Copy,
+  Check,
 } from "lucide-react";
 import { usePlaybookStore, PlaybookRule } from "@/lib/store/usePlaybookStore";
 import { useContractsStore } from "@/lib/store/useContractsStore";
@@ -45,13 +47,16 @@ const CATEGORY_SUGGESTIONS = [
 ];
 
 export default function PlaybookPage() {
-  const { playbooks, complianceResult, isChecking, isLoading, fetchPlaybooks, createPlaybook, deletePlaybook, checkContractCompliance, clearComplianceResult } =
+  const { playbooks, complianceResult, isChecking, isLoading, fetchPlaybooks, createPlaybook, deletePlaybook, checkContractCompliance, clearComplianceResult, suggestAlternative } =
     usePlaybookStore();
   const { contracts, fetchContracts } = useContractsStore();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCheckModal, setShowCheckModal] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState<number | null>(null);
+  const [suggestions, setSuggestions] = useState<Record<number, string>>({});
+  const [loadingSuggestions, setLoadingSuggestions] = useState<Record<number, boolean>>({});
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [form, setForm] = useState({
     rule_category: "",
     preferred_terms: "",
@@ -361,18 +366,99 @@ export default function PlaybookPage() {
                   </div>
                 ) : (
                   <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-1">
-                    {complianceResult.violations.map((v, idx) => (
-                      <div key={idx} className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 space-y-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-slate-700">{v.rule_category}</span>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${RISK_COLORS[v.severity]}`}>{v.severity}</span>
+                    {complianceResult.violations.map((v, idx) => {
+                      const matchingRule = playbooks.find(p => p.rule_category.toLowerCase() === v.rule_category.toLowerCase());
+                      const hasAlternative = !!suggestions[idx];
+                      const isAlternativeLoading = !!loadingSuggestions[idx];
+
+                      const handleRequestAlternative = async () => {
+                        setLoadingSuggestions(prev => ({ ...prev, [idx]: true }));
+                        try {
+                          const clauseAlternative = await suggestAlternative({
+                            rule_category: v.rule_category,
+                            violation: v.violation,
+                            clause_text: v.clause_text,
+                            preferred_terms: matchingRule?.preferred_terms,
+                            forbidden_terms: matchingRule?.forbidden_terms
+                          });
+                          setSuggestions(prev => ({ ...prev, [idx]: clauseAlternative }));
+                        } catch (err) {
+                          console.error(err);
+                        } finally {
+                          setLoadingSuggestions(prev => ({ ...prev, [idx]: false }));
+                        }
+                      };
+
+                      const handleCopyAlternative = () => {
+                        navigator.clipboard.writeText(suggestions[idx] || "");
+                        setCopiedIndex(idx);
+                        setTimeout(() => setCopiedIndex(null), 2000);
+                      };
+
+                      return (
+                        <div key={idx} className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 space-y-2 text-left">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-bold text-slate-700">{v.rule_category}</span>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${RISK_COLORS[v.severity]}`}>{v.severity}</span>
+                          </div>
+                          <p className="text-xs text-slate-600 leading-normal">{v.violation}</p>
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Original text:</p>
+                            <p className="text-[10px] text-slate-400 font-mono bg-white rounded-lg px-2.5 py-1.5 border border-slate-200 line-clamp-2 leading-relaxed">
+                              {v.clause_text}
+                            </p>
+                          </div>
+
+                          {/* Alternative Action */}
+                          {!hasAlternative && !isAlternativeLoading && (
+                            <button
+                              onClick={handleRequestAlternative}
+                              className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg border border-indigo-100 hover:border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50 text-[10px] text-indigo-600 font-bold transition cursor-pointer"
+                            >
+                              <Sparkles className="w-3 h-3 text-indigo-500 animate-pulse" />
+                              Suggest Compliant Alternative
+                            </button>
+                          )}
+
+                          {isAlternativeLoading && (
+                            <div className="flex items-center justify-center py-2 gap-1.5 text-[10px] text-indigo-500 font-semibold bg-indigo-50/20 border border-indigo-50 rounded-lg">
+                              <div className="w-3 h-3 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin" />
+                              Drafting rephrased legal alternative...
+                            </div>
+                          )}
+
+                          {hasAlternative && (
+                            <div className="mt-2 p-3 bg-emerald-50/40 border border-emerald-100 rounded-lg space-y-1.5 animate-fade-slide-up">
+                              <div className="flex items-center justify-between">
+                                <p className="text-[10px] font-black text-emerald-700 uppercase tracking-wider flex items-center gap-1">
+                                  <Sparkles className="w-3 h-3" />
+                                  Suggested Rephrase:
+                                </p>
+                                <button
+                                  onClick={handleCopyAlternative}
+                                  className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 hover:text-emerald-700 transition cursor-pointer"
+                                >
+                                  {copiedIndex === idx ? (
+                                    <>
+                                      <Check className="w-3 h-3" />
+                                      Copied!
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="w-3 h-3" />
+                                      Copy
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                              <p className="text-[10.5px] text-slate-700 font-medium leading-relaxed font-mono bg-white p-2 rounded-md border border-emerald-100/50">
+                                {suggestions[idx]}
+                              </p>
+                            </div>
+                          )}
                         </div>
-                        <p className="text-xs text-slate-600 leading-normal">{v.violation}</p>
-                        <p className="text-[10px] text-slate-400 font-mono bg-white rounded-lg px-2.5 py-1.5 border border-slate-200 line-clamp-2 leading-relaxed">
-                          {v.clause_text}
-                        </p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 

@@ -355,3 +355,44 @@ def check_contract_against_playbook(contract_text: str, playbook_rules: list[dic
     except Exception as e:
         print(f"Error in playbook compliance check: {e}")
         return []
+
+
+def suggest_playbook_alternative(
+    rule_category: str,
+    violation: str,
+    clause_text: str,
+    preferred_terms: str = None,
+    forbidden_terms: str = None
+) -> str:
+    """
+    Generates a compliant alternative clause based on a playbook violation and standard preferred terms.
+    """
+    if not client:
+        # Offline fallback
+        pref = preferred_terms or "standard compliant parameters"
+        return f"This agreement is subject to the rule category of '{rule_category}', in accordance with terms: {pref}."
+
+    prompt = (
+        "You are an expert corporate legal draftsman. You are given a clause that violates our company policy, "
+        "along with the playbook policy specifications. Rephrase the clause so that it complies with our policy.\n\n"
+        f"Rule Category: {rule_category}\n"
+        f"Violation Description: {violation}\n"
+        f"Original Clause:\n{clause_text}\n\n"
+        f"Preferred/Required Terms to Include: {preferred_terms or 'None specified'}\n"
+        f"Forbidden Terms to Exclude: {forbidden_terms or 'None specified'}\n\n"
+        "Generate ONLY the suggested compliant clause text. Do not provide introductions, conversational remarks, "
+        "explanations, or markdown backticks. Just output the clause directly."
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="mistralai/mistral-medium-3.5-128b",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+            max_tokens=1024,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Error generating compliance alternative: {e}")
+        return f"Unable to generate suggestion. Please ensure terms match: {preferred_terms or 'standard terms'}"
+

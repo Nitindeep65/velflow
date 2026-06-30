@@ -35,6 +35,13 @@ interface PlaybookStore {
   deletePlaybook: (id: number) => Promise<void>;
   checkContractCompliance: (contractId: number) => Promise<void>;
   clearComplianceResult: () => void;
+  suggestAlternative: (data: {
+    rule_category: string;
+    violation: string;
+    clause_text: string;
+    preferred_terms?: string | null;
+    forbidden_terms?: string | null;
+  }) => Promise<string>;
 }
 
 export const usePlaybookStore = create<PlaybookStore>((set) => ({
@@ -93,4 +100,17 @@ export const usePlaybookStore = create<PlaybookStore>((set) => ({
   },
 
   clearComplianceResult: () => set({ complianceResult: null }),
+
+  suggestAlternative: async (data) => {
+    try {
+      const resp = await fetchApi("/api/playbook/suggest-alternative", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      return resp.suggested_alternative;
+    } catch (err) {
+      console.error("Failed to suggest alternative:", err);
+      return "Unable to suggest an alternative clause at this time.";
+    }
+  },
 }));
