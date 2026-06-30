@@ -362,15 +362,15 @@
 
 /* ── Unified Premium Sidebar styles ─────────────────────── */
 .bg-sidebar {
-  background: #ffffff !important;
+  background: var(--sidebar) !important;
 }
 
 /* Sidebar scrollbar styling */
 [data-sidebar="content"]::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.08) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 [data-sidebar="content"]::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.15) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* ── Landing Page Modern UI Tricks ───────────────────────── */
