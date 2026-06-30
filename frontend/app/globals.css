@@ -411,3 +411,25 @@
   filter: blur(40px);
   z-index: 0;
 }
+
+/* ── Dark Mode Site-Wide Theme Override Refinements ──────── */
+html.dark {
+  .bg-white {
+    background-color: var(--card) !important;
+  }
+  .bg-slate-50, .bg-slate-50\/30, .bg-slate-50\/50, .bg-slate-100 {
+    background-color: var(--background) !important;
+  }
+  .border-slate-100, .border-slate-150, .border-slate-200, .border-slate-200\/80, .border-slate-200\/60 {
+    border-color: var(--border) !important;
+  }
+  .text-slate-950, .text-slate-900 {
+    color: var(--foreground) !important;
+  }
+  .text-slate-800, .text-slate-700 {
+    color: #cbd5e1 !important;
+  }
+  .text-slate-650, .text-slate-600, .text-slate-500 {
+    color: #94a3b8 !important;
+  }
+}

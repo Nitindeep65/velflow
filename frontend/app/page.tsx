@@ -1533,7 +1533,7 @@ export default function LandingPage() {
               
               <div className="flex items-center justify-center pt-3 relative z-10">
                 <Link href="/signup">
-                  <Button size="lg" className="bg-white text-slate-950 hover:bg-slate-100 font-extrabold cursor-pointer px-7 h-12 text-sm rounded-xl shadow-md flex items-center gap-2">
+                  <Button size="lg" className="bg-slate-100 text-slate-950 hover:bg-slate-200 font-extrabold cursor-pointer px-7 h-12 text-sm rounded-xl shadow-md flex items-center gap-2">
                     Create Free Account
                     <ArrowRight className="h-4 w-4 stroke-[2.5]" />
                   </Button>
@@ -1545,17 +1545,17 @@ export default function LandingPage() {
         </main>
 
         {/* Premium Multi-Column Footer */}
-        <footer className="border-t border-slate-200 bg-white relative z-10 py-12 select-none">
+        <footer className="border-t border-[var(--border)] bg-[var(--card)] relative z-10 py-12 select-none">
           <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 mb-10">
             
             {/* Column 1: Brand & Desc */}
             <div className="md:col-span-5 space-y-4">
               <Link href="/" className="flex items-center gap-2.5">
-                <div className="h-8.5 w-8.5 rounded-lg flex items-center justify-center text-white font-extrabold text-base shadow-md bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/20">
+                <div className="h-8.5 w-8.5 rounded-lg flex items-center justify-center text-white font-extrabold text-base shadow-md bg-gradient-to-br from-blue-500 to-indigo-600 shadow-indigo-500/20">
                   <Scale className="h-4 w-4 text-white" strokeWidth={2.5} />
                 </div>
-                <span className="font-extrabold text-lg tracking-tight text-slate-900">
-                  Vel<span className="text-blue-600">flow</span>
+                <span className="font-extrabold text-lg tracking-tight text-white">
+                  Vel<span className="text-indigo-400">flow</span>
                 </span>
               </Link>
               <p className="text-xs text-slate-400 font-semibold leading-relaxed max-w-sm">
