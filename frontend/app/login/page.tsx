@@ -46,6 +46,8 @@ export default function LoginPage() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
 
         <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center relative z-10">
+          <title>Sign In | VelFlow Enterprise CLM</title>
+          <meta name="description" content="Access your VelFlow contract management and AI policy compliance workspace." />
           <LinkComponent href="/" className="flex items-center gap-2.5 group mb-6 hover:scale-105 transition-transform duration-300">
             <div className="h-8 w-8 rounded-lg bg-zinc-950 flex items-center justify-center text-white font-extrabold text-base shadow-md group-hover:bg-blue-600 transition-colors">
               V
@@ -55,11 +57,11 @@ export default function LoginPage() {
             </span>
           </LinkComponent>
           <h2 className="text-center text-2xl font-black tracking-tight text-zinc-950">
-            Sign in to Velflow
+            Sign in to VelFlow
           </h2>
           <p className="mt-1.5 text-center text-xs text-zinc-500 font-bold flex items-center gap-1 mb-6 select-none">
             <Sparkles className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
-            Velflow Safe Compliance Access
+            VelFlow Safe Compliance Access
           </p>
         </div>
 
@@ -101,14 +103,9 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest select-none">
-                    Password
-                  </label>
-                  <a href="#" className="text-[10px] text-blue-600 hover:text-blue-700 font-bold">
-                    Forgot Password?
-                  </a>
-                </div>
+                <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 select-none">
+                  Password
+                </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-4 w-4 text-zinc-400" />
@@ -119,7 +116,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="block w-full pl-9 pr-3 py-2 text-sm bg-white border border-zinc-200 rounded-xl text-zinc-950 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 transition-all font-semibold placeholder:text-zinc-400"
+                    className="block w-full pl-9 pr-3 py-2 text-sm bg-white border border-zinc-200 rounded-xl text-zinc-950 focus:outline-none focus:ring-2 focus:ring-blue-600/10 focus:border-blue-600 transition-all font-semibold placeholder:text-zinc-400 placeholder:font-normal"
                     disabled={isLoading || isSuccess}
                   />
                 </div>
@@ -129,17 +126,17 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading || isSuccess}
-                  className="w-full h-11 bg-zinc-950 text-white hover:bg-zinc-850 font-extrabold cursor-pointer rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white text-xs font-black transition cursor-pointer shadow-md shadow-blue-100 disabled:opacity-40 h-10"
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Authenticating Secure Session...
+                      Authenticating Account...
                     </>
                   ) : isSuccess ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Redirecting to Dashboard...
+                      Loading Workspace...
                     </>
                   ) : (
                     <>
@@ -157,17 +154,17 @@ export default function LoginPage() {
               <div className="flex-grow border-t border-zinc-150"></div>
             </div>
 
-            <div className="bg-zinc-50 border border-zinc-150 rounded-xl p-3.5 space-y-1">
+            <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 space-y-1">
               <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5 select-none">
-                💡 Developer Dummy Access Active
+                ⚡ Developer Sandbox Mode Active
               </span>
               <p className="text-[10.5px] text-zinc-500 leading-relaxed font-semibold">
-                Enter any dummy email and password to log in instantly. The app will simulate a secure active session.
+                You can log in with any email and password in developer preview mode. A secure workspace session will be provisioned automatically.
               </p>
             </div>
 
             <p className="text-center text-xs text-zinc-500 font-bold select-none pt-2">
-              New to Velflow?{" "}
+              New to VelFlow?{" "}
               <LinkComponent href="/signup" className="text-blue-600 hover:text-blue-700 font-extrabold">
                 Create a Free Account
               </LinkComponent>

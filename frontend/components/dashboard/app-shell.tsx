@@ -5,8 +5,8 @@ import * as React from "react";
 import {
   Search,
   Bell,
-  Sparkles,
   ChevronDown,
+  ShieldCheck,
 } from "lucide-react";
 import { useContractsStore } from "@/lib/store/useContractsStore";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
@@ -113,11 +113,11 @@ export function AppShell({ children, user, onLogout }: AppShellProps) {
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              {/* AI Status pill */}
+              {/* Engine Status pill */}
               <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold tracking-wide uppercase select-none"
-                style={{ background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)", border: "1px solid rgba(59,130,246,0.15)", color: "#1d4ed8" }}>
-                <Sparkles className="h-3 w-3 animate-pulse shrink-0 text-blue-500" />
-                AI Online
+                style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", border: "1px solid rgba(16,185,129,0.15)", color: "#166534" }}>
+                <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-600" />
+                System Active
               </div>
 
               {/* Notification bell */}

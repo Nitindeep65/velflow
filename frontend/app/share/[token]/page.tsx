@@ -166,6 +166,8 @@ export default function GuestSharePage({ params }: SharePageProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col select-none">
+      <title>{`Review & Sign: ${contract.name} | VelFlow SecureSign`}</title>
+      <meta name="description" content="Collaboratively review, discuss, and sign this legal agreement securely via VelFlow's client workspace." />
       {/* ── Top Bar Header ── */}
       <header className="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between shrink-0 shadow-2xs">
         <div className="flex items-center gap-3">

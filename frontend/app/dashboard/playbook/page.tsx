@@ -305,7 +305,7 @@ export default function PlaybookPage() {
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-indigo-500 animate-pulse" />
+                  <ShieldCheck className="w-4 h-4 text-indigo-500" />
                   Run Compliance Check
                 </h3>
                 <p className="text-[10px] text-slate-400 mt-0.5 font-medium">Verify your document alignment against active rules</p>
@@ -335,7 +335,7 @@ export default function PlaybookPage() {
                   {isChecking ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/35 border-t-white rounded-full animate-spin" />
-                      Auditing via AI…
+                      Auditing contract...
                     </>
                   ) : (
                     <>
@@ -415,7 +415,7 @@ export default function PlaybookPage() {
                               onClick={handleRequestAlternative}
                               className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg border border-indigo-100 hover:border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50 text-[10px] text-indigo-600 font-bold transition cursor-pointer"
                             >
-                              <Sparkles className="w-3 h-3 text-indigo-500 animate-pulse" />
+                              <ShieldCheck className="w-3 h-3 text-indigo-500" />
                               Suggest Compliant Alternative
                             </button>
                           )}
@@ -431,7 +431,7 @@ export default function PlaybookPage() {
                             <div className="mt-2 p-3 bg-emerald-50/40 border border-emerald-100 rounded-lg space-y-1.5 animate-fade-slide-up">
                               <div className="flex items-center justify-between">
                                 <p className="text-[10px] font-black text-emerald-700 uppercase tracking-wider flex items-center gap-1">
-                                  <Sparkles className="w-3 h-3" />
+                                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
                                   Suggested Rephrase:
                                 </p>
                                 <button

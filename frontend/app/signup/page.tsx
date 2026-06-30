@@ -47,6 +47,8 @@ export default function SignupPage() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
 
         <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center relative z-10">
+          <title>Create Account | VelFlow CLM</title>
+          <meta name="description" content="Sign up for a VelFlow account to start managing contracts and analyzing compliance." />
           <LinkComponent href="/" className="flex items-center gap-2.5 group mb-6 hover:scale-105 transition-transform duration-300">
             <div className="h-8 w-8 rounded-lg bg-zinc-950 flex items-center justify-center text-white font-extrabold text-base shadow-md group-hover:bg-blue-600 transition-colors">
               V
@@ -60,7 +62,7 @@ export default function SignupPage() {
           </h2>
           <p className="mt-1.5 text-center text-xs text-zinc-500 font-bold flex items-center gap-1 mb-6 select-none">
             <Sparkles className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
-            Get Started with Velflow AI compliance
+            Get Started with VelFlow AI compliance
           </p>
         </div>
 
@@ -173,17 +175,17 @@ export default function SignupPage() {
               <div className="flex-grow border-t border-zinc-150"></div>
             </div>
 
-            <div className="bg-zinc-50 border border-zinc-150 rounded-xl p-3.5 space-y-1">
+            <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 space-y-1">
               <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5 select-none">
-                💡 Developer Dummy Access Active
+                ⚡ Developer Sandbox Mode Active
               </span>
               <p className="text-[10.5px] text-zinc-500 leading-relaxed font-semibold">
-                You can create a dummy profile with any full name, email, and password to test the entire client application workflow.
+                You can create a custom profile with any full name, email, and password to explore the client application workspace.
               </p>
             </div>
 
             <p className="text-center text-xs text-zinc-500 font-bold select-none pt-2">
-              Already have a Velflow account?{" "}
+              Already have a VelFlow account?{" "}
               <LinkComponent href="/login" className="text-blue-600 hover:text-blue-700 font-extrabold">
                 Sign In
               </LinkComponent>

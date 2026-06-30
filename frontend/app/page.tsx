@@ -465,8 +465,8 @@ export default function LandingPage() {
                 boxShadow: "0 2px 8px rgba(59,130,246,0.1)",
               }}
             >
-              <Sparkles className="h-3 w-3 animate-pulse" />
-              Product-led AI Legal Co-Pilot · Powered by Gemini
+              <ShieldCheck className="h-3 w-3 animate-pulse text-blue-600" />
+              Enterprise Contract Lifecycle Management & Compliance Suite
             </div>
             
             {/* Main Headline */}
@@ -497,7 +497,7 @@ export default function LandingPage() {
             
             {/* Subtitle */}
             <p className="text-sm sm:text-[15px] text-slate-500 leading-relaxed font-medium max-w-xl mx-auto">
-              Velflow is the AI Contract Navigator built for founders, freelancers, and growth teams.
+              VelFlow is the Contract Lifecycle & Compliance platform built for founders, legal teams, and finance officers.
               Analyze risk, compare versions, and track critical renewal deadlines — in seconds.
             </p>
 
@@ -544,13 +544,13 @@ export default function LandingPage() {
 
             {/* Quick-Navigator Bar */}
             <div className="pt-6">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 text-center">⚡ Click to instantly explore features</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 text-center">Click to instantly explore features</p>
               <div className="flex flex-wrap items-center justify-center gap-2 max-w-xl mx-auto">
                 {[
-                  { label: "🔍 Risk Analyzer", sectionId: "sandbox" },
-                  { label: "💬 Legal AI Chat", sectionId: "features", tab: "chat" },
-                  { label: "⚖️ Smart Redlines", sectionId: "features", tab: "diff" },
-                  { label: "📅 Obligation timeline", sectionId: "features", tab: "timeline" },
+                  { label: "Risk Analyzer", sectionId: "sandbox" },
+                  { label: "Collaboration Chat", sectionId: "features", tab: "chat" },
+                  { label: "Redline Comparison", sectionId: "features", tab: "diff" },
+                  { label: "Obligation timeline", sectionId: "features", tab: "timeline" },
                 ].map((item) => (
                   <button
                     key={item.label}
@@ -609,7 +609,7 @@ export default function LandingPage() {
                 <div className="relative h-16 w-16 flex items-center justify-center">
                   <div className="absolute inset-0 rounded-full border-4 border-slate-100" />
                   <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
-                  <Sparkles className="h-5 w-5 text-blue-600 animate-pulse" />
+                  <ShieldCheck className="h-5 w-5 text-blue-600 animate-pulse" />
                 </div>
                 
                 <div className="space-y-1.5 max-w-sm mx-auto">
@@ -693,8 +693,8 @@ export default function LandingPage() {
                   <div className="md:col-span-8 space-y-4">
                     <div className="bg-slate-50/50 border border-slate-100 rounded-xl p-4.5 space-y-1.5 shadow-2xs">
                       <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider flex items-center gap-1.5 select-none">
-                        <Sparkles className="h-3 w-3 animate-pulse" />
-                        AI Summary & Overview
+                        <ShieldCheck className="h-3 w-3" />
+                        Summary & Policy Overview
                       </span>
                       <p className="text-xs text-slate-600 font-semibold leading-relaxed transition-all duration-300">
                         {currentPreset.summary}
@@ -1153,24 +1153,24 @@ export default function LandingPage() {
                       {sandboxHighlights[activeClause].desc}
                     </p>
                     <div className="flex items-center justify-between gap-4 pt-1.5 border-t border-slate-800">
-                      <span className="text-[10px] text-slate-400 font-bold select-none">Velflow's AI auto-fix is ready.</span>
+                      <span className="text-[10px] text-slate-400 font-bold select-none">VelFlow's compliance auto-fix is ready.</span>
                       <button
                         onClick={() => triggerAutoFix(activeClause)}
                         className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-all shadow-xs"
                       >
-                        <Sparkles className="h-3.5 w-3.5" />
-                        1-Click AI Fix
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        1-Click Auto-Fix
                       </button>
                     </div>
                   </div>
                 )}
 
-                {/* AI Review Details (Dynamic assessment blocks) */}
+                {/* Review Details (Dynamic assessment blocks) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <span className="text-[10px] font-black text-rose-500 uppercase tracking-wider select-none flex items-center gap-1">
                       <AlertTriangle className="h-3 w-3" />
-                      AI Risk Assessment
+                      Risk Audit Assessment
                     </span>
                     <p className="text-[11.5px] text-slate-600 font-semibold leading-relaxed">
                       {isFixedMap[activeClause] 
@@ -1180,8 +1180,8 @@ export default function LandingPage() {
                   </div>
                   <div className="space-y-1">
                     <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider select-none flex items-center gap-1">
-                      <Sparkles className="h-3 w-3" />
-                      Suggested Action
+                      <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
+                      Compliance Strategy
                     </span>
                     <p className="text-[11.5px] text-slate-600 font-semibold leading-relaxed">
                       {isFixedMap[activeClause] 

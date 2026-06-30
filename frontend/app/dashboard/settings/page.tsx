@@ -677,7 +677,7 @@ export default function SettingsPage() {
 
         {/* ── Webhooks Tab ── */}
         {activeTab === "webhooks" && (
-          <div className="space-y-6">
+          <div className="lg:col-span-12 space-y-6">
             {/* Integration Cards */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100">
