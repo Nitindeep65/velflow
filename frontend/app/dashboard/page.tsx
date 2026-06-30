@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContractsStore } from "@/lib/store/useContractsStore";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useCrmStore } from "@/lib/store/useCrmStore";
+import { useTasksStore } from "@/lib/store/useTasksStore";
 import { Button } from "@/components/ui/button";
 import {
   FileText,
@@ -94,13 +96,19 @@ export default function DashboardHome() {
   const router = useRouter();
   const { user, isAuthenticated, isHydrated } = useAuthStore();
   const { contracts, isLoading, fetchContracts, addContract, restoreDefaults } = useContractsStore();
+  const { fetchCrmData, pipelines } = useCrmStore();
+  const { fetchTasks, tasks, toggleTaskCompleted } = useTasksStore();
   const { addToast } = useToast();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isHydrated && isAuthenticated) fetchContracts();
-  }, [fetchContracts, isHydrated, isAuthenticated]);
+    if (isHydrated && isAuthenticated) {
+      fetchContracts();
+      fetchCrmData();
+      fetchTasks();
+    }
+  }, [fetchContracts, fetchCrmData, fetchTasks, isHydrated, isAuthenticated]);
 
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -150,6 +158,18 @@ export default function DashboardHome() {
       low: Math.round((stats.low / total) * 100),
     };
   }, [stats]);
+
+  const pipelineValue = useMemo(() => {
+    return pipelines.reduce((sum, p) => sum + p.value, 0);
+  }, [pipelines]);
+
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(val);
+  };
 
   const formatDate = (dateString: string) => {
     try { return new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }); }
@@ -261,7 +281,7 @@ export default function DashboardHome() {
           gradient="linear-gradient(135deg, #3b82f6, #2563eb)" glowColor="rgba(59,130,246,0.1)" delay={0} />
         <StatCard label="Critical Risks" value={stats.high} sub={stats.high > 0 ? "High severity flagged" : "No critical issues"} icon={ShieldAlert}
           gradient="linear-gradient(135deg, #ef4444, #e11d48)" glowColor="rgba(239,68,68,0.1)" delay={60} />
-        <StatCard label="Needs Attention" value={stats.needsReview} sub="Pending manual audit" icon={Clock}
+        <StatCard label="Deal Pipeline" value={formatCurrency(pipelineValue)} sub={`${pipelines.length} active deal cards`} icon={TrendingUp}
           gradient="linear-gradient(135deg, #f59e0b, #d97706)" glowColor="rgba(245,158,11,0.1)" delay={120} />
         <StatCard
           label="Next Obligation"
@@ -568,6 +588,72 @@ export default function DashboardHome() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* AI Obligation Checklist */}
+          <div className="rounded-2xl overflow-hidden animate-fade-slide-up"
+            style={{ background: "white", border: "1px solid rgba(226,232,240,0.8)", boxShadow: "0 1px 3px rgba(15,23,42,0.04)", animationDelay: "340ms" }}>
+            <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: "1px solid #f1f5f9" }}>
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+                  style={{ background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)", border: "1px solid rgba(59,130,246,0.12)" }}>
+                  <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">AI Obligation Tracker</h3>
+                  <p className="text-[11px] text-slate-500 font-medium">Extracted post-signature tasks</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-5">
+              {tasks.length === 0 ? (
+                <div className="text-center py-8">
+                  <CheckCircle2 className="h-8 w-8 text-slate-200 mx-auto mb-2" />
+                  <p className="text-xs text-slate-400 font-medium">No obligations extracted yet.</p>
+                  <p className="text-[10px] text-slate-400 font-medium mt-0.5">Click 'Load Demo' or seed CRM records.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {tasks.slice(0, 5).map((task) => (
+                    <div
+                      key={task.id}
+                      className="flex items-start gap-3 p-2.5 hover:bg-slate-50 rounded-xl transition-all border border-slate-100/50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={async (e) => {
+                          await toggleTaskCompleted(task.id, e.target.checked);
+                          addToast({
+                            type: "success",
+                            title: e.target.checked ? "Obligation completed!" : "Obligation reopened",
+                            message: `Task status updated in database.`,
+                          });
+                        }}
+                        className="mt-1 h-3.5 w-3.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-xs font-bold leading-snug ${task.completed ? "line-through text-slate-400" : "text-slate-800"}`}>
+                          {task.title}
+                        </p>
+                        {task.due_date && (
+                          <div className="flex items-center gap-1.5 mt-1 text-[9px] font-bold text-slate-400">
+                            <CalendarDays className="h-3 w-3 shrink-0" />
+                            <span>Due: {formatDate(task.due_date)}</span>
+                            {task.contract_name && (
+                              <>
+                                <span>•</span>
+                                <span className="truncate max-w-[120px]">{task.contract_name}</span>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

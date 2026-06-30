@@ -13,6 +13,8 @@ export interface ContractRowData {
   status: ContractStatus;
   next_date: string | null;
   created_at: string;
+  counterparty_id?: number | null;
+  pipeline_id?: number | null;
   summary_points?: string[];
   risks?: Array<{ text: string; severity: RiskLevel }>;
   dates_timeline?: MilestoneDate[];

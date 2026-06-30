@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
   ArrowLeft, 
@@ -20,12 +20,18 @@ import {
   CheckCircle2,
   Info,
   X,
-  FileCheck
+  FileCheck,
+  Share2,
+  Clipboard,
+  MessageSquare,
+  ShieldCheck,
+  PenTool
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchApi, fetchFileBlob } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useCrmCollaborationStore } from "@/lib/store/useCrmCollaborationStore";
 import { DetailHeader } from "@/components/contract/detail-header";
 import { RiskRadar } from "@/components/contract/risk-radar";
 import { QANavigator } from "@/components/contract/qa-navigator";
@@ -125,6 +131,31 @@ export default function ContractDetailsPage() {
   });
   const [selectedTimelineEvent, setSelectedTimelineEvent] = useState<any>(null);
 
+  // Collaboration Hook
+  const {
+    comments,
+    signatures,
+    fetchComments,
+    postComment,
+    fetchSignatures,
+    signContract,
+  } = useCrmCollaborationStore();
+
+  const [activeClauseIndex, setActiveClauseIndex] = useState<number | null>(null);
+  const [commentText, setCommentText] = useState("");
+  const [isSigningOpen, setIsSigningOpen] = useState(false);
+  const [signerName, setSignerName] = useState("");
+  const [signerEmail, setSignerEmail] = useState("");
+  const [typedSignature, setTypedSignature] = useState("");
+  const [isSubmittingSignature, setIsSubmittingSignature] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [contractText, setContractText] = useState("");
+
+  const contractClauses = useMemo(() => {
+    if (!contractText) return [];
+    return contractText.split("\n\n").filter((p: string) => p.trim().length > 0);
+  }, [contractText]);
+
   const { isAuthenticated, isHydrated } = useAuthStore();
 
   // Fetch initial data
@@ -137,6 +168,11 @@ export default function ContractDetailsPage() {
         const blob = await fetchFileBlob(`/contracts/${contractId}/file`);
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
+
+        const shareData = await fetchApi(`/contracts/${contractId}/share`);
+        setContractText(shareData.text || "");
+        fetchComments(parseInt(contractId));
+        fetchSignatures(parseInt(contractId));
       } catch (err) {
         setError("Failed to load document.");
       }
@@ -381,7 +417,7 @@ export default function ContractDetailsPage() {
     }
   };
 
-  const tabs = ["Overview", "Risk Radar", "Q&A", "Comparison", "Dates"];
+  const tabs = ["Overview", "Risk Radar", "Q&A", "Comparison", "Dates", "Negotiate & Sign"];
 
   if (!contractData) {
     return (
@@ -856,6 +892,206 @@ export default function ContractDetailsPage() {
           </div>
         )}
 
+        {/* NEGOTIATE & SIGN TAB */}
+        {activeTab === "Negotiate & Sign" && (
+          <div className="space-y-6 max-w-6xl mx-auto w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              {/* Document Text Line-by-Line (8 cols) */}
+              <div className="lg:col-span-8 bg-white border border-zinc-200 rounded-xl p-6 shadow-2xs">
+                <div className="flex items-center justify-between border-b border-zinc-100 pb-3.5 mb-4">
+                  <h3 className="text-base font-black text-zinc-950 flex items-center gap-2">
+                    <FileText className="h-4.5 w-4.5 text-zinc-700" />
+                    Agreement Clauses
+                  </h3>
+                  <span className="text-[10px] text-zinc-400 font-bold uppercase">Click any clause to review or comment</span>
+                </div>
+                
+                <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                  {contractClauses.length === 0 ? (
+                    <div className="text-center py-12 text-zinc-400 text-xs italic font-medium">
+                      No text clauses extracted. Click Re-analyze to generate text body.
+                    </div>
+                  ) : (
+                    contractClauses.map((clause: string, idx: number) => {
+                      const isActive = activeClauseIndex === idx;
+                      const clauseCommentsCount = comments.filter(c => c.clause_index === idx).length;
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => setActiveClauseIndex(idx)}
+                          className={`p-3 rounded-xl border transition-all cursor-pointer relative group ${
+                            isActive
+                              ? "bg-blue-50/20 border-blue-200 shadow-2xs"
+                              : "border-transparent hover:bg-zinc-50 hover:border-zinc-200/60"
+                          }`}
+                        >
+                          {clauseCommentsCount > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 h-4.5 px-1.5 flex items-center justify-center text-[9px] font-black text-white bg-blue-600 rounded-full shadow-sm">
+                              {clauseCommentsCount}
+                            </span>
+                          )}
+                          <div className="prose prose-slate max-w-none text-xs font-semibold leading-relaxed text-zinc-700">
+                            <ReactMarkdown>{clause}</ReactMarkdown>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Sidebar Action Center (4 cols) */}
+              <div className="lg:col-span-4 space-y-6">
+                
+                {/* Public Share Link Card */}
+                <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-2xs">
+                  <h4 className="text-xs font-black text-zinc-800 tracking-tight uppercase flex items-center gap-2 mb-3">
+                    <Share2 className="h-4 w-4 text-blue-600" />
+                    Guest Share Portal
+                  </h4>
+                  <p className="text-[11px] text-zinc-500 font-semibold leading-normal mb-4">
+                    Generate a secure public link for external clients or lawyers to view and e-sign this document.
+                  </p>
+                  
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={typeof window !== "undefined" ? `${window.location.origin}/share/${contractId}` : `/share/${contractId}`}
+                      className="flex-1 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-[10px] font-mono text-zinc-500 focus:outline-none"
+                    />
+                    <Button
+                      size="xs"
+                      onClick={() => {
+                        const link = `${window.location.origin}/share/${contractId}`;
+                        navigator.clipboard.writeText(link);
+                        setCopiedLink(true);
+                        setTimeout(() => setCopiedLink(false), 2000);
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer shrink-0 rounded-lg h-8"
+                    >
+                      {copiedLink ? "Copied!" : "Copy Link"}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* E-Signing Actions */}
+                <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-2xs">
+                  <h4 className="text-xs font-black text-zinc-800 tracking-tight uppercase flex items-center gap-2 mb-3">
+                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                    E-Signatures
+                  </h4>
+                  
+                  {contractData.status === "Signed" || signatures.length > 0 ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-1.5 text-emerald-600 text-[11px] font-black">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Signed & Locked
+                      </div>
+                      
+                      <div className="space-y-3.5 mt-2">
+                        {signatures.map((sig) => (
+                          <div key={sig.id} className="p-3 bg-zinc-50 border border-zinc-155 rounded-xl text-[11px] text-zinc-600 font-semibold space-y-1">
+                            <div>
+                              <span className="text-zinc-400 uppercase text-[8px] font-black block">Signer:</span>
+                              <span className="font-extrabold text-zinc-800">{sig.signer_name}</span>
+                            </div>
+                            <div>
+                              <span className="text-zinc-400 uppercase text-[8px] font-black block">Email:</span>
+                              <span>{sig.signer_email}</span>
+                            </div>
+                            {sig.verification_token && (
+                              <div>
+                                <span className="text-zinc-400 uppercase text-[8px] font-black block">Audit Hash:</span>
+                                <span className="font-mono text-[9px] font-black bg-zinc-200 px-1 py-0.5 rounded">
+                                  {sig.verification_token}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-[11px] text-zinc-500 font-semibold leading-normal mb-4">
+                        This agreement requires signatures from both parties to complete the deal stage.
+                      </p>
+                      <Button
+                        onClick={() => setIsSigningOpen(true)}
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold cursor-pointer flex items-center justify-center gap-1.5 shadow-md shadow-blue-100 rounded-xl h-9"
+                      >
+                        <PenTool className="h-4 w-4" />
+                        E-Sign Contract
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Redlines thread */}
+                <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-2xs space-y-3">
+                  <h4 className="text-xs font-black text-zinc-800 tracking-tight uppercase flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-blue-600" />
+                    {activeClauseIndex !== null ? `Comments: Clause #${activeClauseIndex + 1}` : "Clause Redlines"}
+                  </h4>
+                  
+                  <div className="space-y-3.5 max-h-[220px] overflow-y-auto pr-1">
+                    {comments.filter(c => activeClauseIndex === null || c.clause_index === activeClauseIndex).length === 0 ? (
+                      <div className="text-center py-6 text-zinc-400 text-[10px] font-bold">
+                        {activeClauseIndex !== null
+                          ? "No redline comments on this clause yet."
+                          : "Select any clause paragraph in the document to see or leave specific redline comments."}
+                      </div>
+                    ) : (
+                      comments
+                        .filter(c => activeClauseIndex === null || c.clause_index === activeClauseIndex)
+                        .map((c) => (
+                          <div key={c.id} className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-155 space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-black text-zinc-700 leading-none">{c.author_name}</span>
+                              <span className="text-[8px] text-zinc-400 font-bold">
+                                {new Date(c.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                              </span>
+                            </div>
+                            <p className="text-[11px] font-medium text-zinc-600 leading-normal">{c.text}</p>
+                          </div>
+                        ))
+                    )}
+                  </div>
+                  
+                  {contractData.status !== "Signed" && (
+                    <form onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!commentText) return;
+                      await postComment(parseInt(contractId), commentText, activeClauseIndex !== null ? activeClauseIndex : undefined);
+                      setCommentText("");
+                    }} className="border-t border-zinc-100 pt-3 flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Add annotation..."
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        required
+                        className="flex-1 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold focus:outline-none focus:border-blue-500"
+                      />
+                      <Button
+                        type="submit"
+                        size="xs"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer h-7"
+                      >
+                        Post
+                      </Button>
+                    </form>
+                  )}
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* CUSTOM DATE ADD/EDIT DIALOG MODAL */}
@@ -949,6 +1185,92 @@ export default function ContractDetailsPage() {
                   className="bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
                 >
                   Save Milestone
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* E-SIGNATURE MODAL */}
+      {isSigningOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white border border-zinc-200 rounded-xl w-full max-w-md shadow-2xl overflow-hidden animate-scale-in">
+            <div className="bg-zinc-50 border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
+              <h3 className="text-sm font-black text-zinc-900">E-Sign Agreement</h3>
+              <button 
+                onClick={() => setIsSigningOpen(false)}
+                className="h-7 w-7 rounded-md hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600 flex items-center justify-center cursor-pointer transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!signerName || !signerEmail) return;
+              setIsSubmittingSignature(true);
+              try {
+                await signContract(parseInt(contractId), signerName, signerEmail, signerName);
+                setContractData((prev: any) => ({ ...prev, status: "Signed" }));
+                setIsSigningOpen(false);
+                setSignerName("");
+                setSignerEmail("");
+              } catch (err) {
+                alert("Signing failed.");
+              } finally {
+                setIsSubmittingSignature(false);
+              }
+            }} className="p-6 space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Full Name</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="e.g. John Doe"
+                  value={signerName}
+                  onChange={(e) => setSignerName(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 focus:border-blue-500 rounded-lg text-sm font-semibold p-2.5 text-zinc-800 outline-none transition-colors"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Email Address</label>
+                <input 
+                  type="email" 
+                  required
+                  placeholder="e.g. john@acme.com"
+                  value={signerEmail}
+                  onChange={(e) => setSignerEmail(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 focus:border-blue-500 rounded-lg text-sm font-semibold p-2.5 text-zinc-800 outline-none transition-colors"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Signature Preview</label>
+                <div className="h-24 border border-zinc-200 rounded-lg bg-zinc-50 flex items-center justify-center font-serif text-xl italic text-blue-700 tracking-wide">
+                  {signerName || "Typographic Signature"}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setIsSigningOpen(false)}
+                  disabled={isSubmittingSignature}
+                  className="cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  size="sm"
+                  disabled={isSubmittingSignature || !signerName || !signerEmail}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
+                >
+                  {isSubmittingSignature ? "Signing..." : "Verify & Sign"}
                 </Button>
               </div>
             </form>

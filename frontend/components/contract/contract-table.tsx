@@ -23,7 +23,8 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+import { useCrmStore } from "@/lib/store/useCrmStore";
+import { useContractsStore } from "@/lib/store/useContractsStore";
 import { ContractRowData } from "./types";
 import { RiskBadge } from "./risk-badge";
 import { StatusPill } from "./status-pill";
@@ -35,6 +36,9 @@ interface ContractTableProps {
 }
 
 export function ContractTable({ data, onView, onDelete }: ContractTableProps) {
+  const { counterparties, pipelines } = useCrmStore();
+  const { updateContract } = useContractsStore();
+
   return (
     <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-2xs">
       <Table>
@@ -42,6 +46,7 @@ export function ContractTable({ data, onView, onDelete }: ContractTableProps) {
           <TableRow className="border-b border-zinc-200">
             <TableHead className="font-extrabold text-zinc-700 text-xs py-3.5 pl-6 select-none">Contract Name</TableHead>
             <TableHead className="font-extrabold text-zinc-700 text-xs py-3.5 select-none">Counterparty</TableHead>
+            <TableHead className="font-extrabold text-zinc-700 text-xs py-3.5 select-none">CRM Deal Link</TableHead>
             <TableHead className="font-extrabold text-zinc-700 text-xs py-3.5 select-none">Agreement Type</TableHead>
             <TableHead className="font-extrabold text-zinc-700 text-xs py-3.5 select-none">Risk Rating</TableHead>
             <TableHead className="font-extrabold text-zinc-700 text-xs py-3.5 select-none">Next Milestone</TableHead>
@@ -51,7 +56,7 @@ export function ContractTable({ data, onView, onDelete }: ContractTableProps) {
         <TableBody>
           {data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-12 text-zinc-400 italic text-xs select-none">
+              <TableCell colSpan={7} className="text-center py-12 text-zinc-400 italic text-xs select-none">
                 No contracts loaded. Click "Restore Demo Data" or upload a file.
               </TableCell>
             </TableRow>
@@ -69,8 +74,48 @@ export function ContractTable({ data, onView, onDelete }: ContractTableProps) {
                   </div>
                 </TableCell>
                 
-                {/* Counterparty */}
-                <TableCell className="text-xs font-bold text-zinc-700 truncate max-w-[150px]">{item.counterparty}</TableCell>
+                {/* Counterparty (AI Extracted + CRM Link Selector) */}
+                <TableCell className="py-3">
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-zinc-400 text-[10px] font-bold truncate max-w-[130px]" title={item.counterparty}>
+                      AI Extracted: {item.counterparty}
+                    </span>
+                    <select
+                      value={item.counterparty_id || ""}
+                      onChange={async (e) => {
+                        const val = e.target.value;
+                        await updateContract(item.id, { counterparty_id: val ? parseInt(val) : null });
+                      }}
+                      className="bg-transparent hover:bg-slate-100 rounded-md py-0.5 px-1 -ml-1 text-[11px] font-extrabold text-blue-600 focus:ring-1 focus:ring-blue-500 cursor-pointer max-w-[140px] truncate outline-none border-0"
+                    >
+                      <option value="">Unlinked Client</option>
+                      {counterparties.map((cp) => (
+                        <option key={cp.id} value={cp.id}>
+                          {cp.company_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </TableCell>
+                
+                {/* CRM Deal Link Dropdown */}
+                <TableCell className="py-3">
+                  <select
+                    value={item.pipeline_id || ""}
+                    onChange={async (e) => {
+                      const val = e.target.value;
+                      await updateContract(item.id, { pipeline_id: val ? parseInt(val) : null });
+                    }}
+                    className="bg-transparent hover:bg-slate-100 rounded-md py-0.5 px-1 -ml-1 text-[11px] font-extrabold text-slate-600 focus:ring-1 focus:ring-blue-500 cursor-pointer max-w-[145px] truncate outline-none border-0"
+                  >
+                    <option value="">Unlinked Deal</option>
+                    {pipelines.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.deal_name}
+                      </option>
+                    ))}
+                  </select>
+                </TableCell>
                 
                 {/* Status Badge */}
                 <TableCell>

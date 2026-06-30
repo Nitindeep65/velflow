@@ -17,6 +17,8 @@ class Contract(Base):
     mime_type = Column(String, nullable=False)   # e.g., application/pdf
     file_data = Column(LargeBinary, nullable=False) # Binary data of the file
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    counterparty_id = Column(Integer, ForeignKey("counterparties.id", ondelete="SET NULL"), nullable=True)
+    pipeline_id = Column(Integer, ForeignKey("pipelines.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Rich AI analysis metadata fields
@@ -25,5 +27,7 @@ class Contract(Base):
     dates_timeline = Column(JSON, nullable=True)  # List of dicts {"id": str, "title": str, "date": str, "badge": str, "active": bool, "description": str}
     details_extracted = Column(Boolean, default=False)
 
-    # Relationship to User
+    # Relationships
     owner = relationship("User", back_populates="contracts")
+    counterparty_ref = relationship("Counterparty", back_populates="contracts")
+    pipeline = relationship("Pipeline", back_populates="contracts")

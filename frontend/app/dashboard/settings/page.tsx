@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import { Button } from "@/components/ui/button";
+import { fetchApi } from "@/lib/api";
 import {
   User,
   CreditCard,
@@ -23,6 +24,14 @@ import {
   ChevronRight,
   FileText,
   Activity,
+  Webhook,
+  Plus,
+  Trash2,
+  Play,
+  X,
+  ExternalLink,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +41,70 @@ export default function SettingsPage() {
   const [profileEmail, setProfileEmail] = useState(user?.email || "jane@example.com");
   const [company, setCompany] = useState("Acme Corporation");
   const [isSaved, setIsSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profile" | "billing" | "notifications">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "billing" | "notifications" | "webhooks">("profile");
+
+  // Webhook state
+  interface WebhookItem {
+    id: number;
+    name: string;
+    url: string;
+    events: string[];
+    is_active: boolean;
+  }
+  const [webhooks, setWebhooks] = useState<WebhookItem[]>([]);
+  const [showWebhookModal, setShowWebhookModal] = useState(false);
+  const [webhookForm, setWebhookForm] = useState({ name: "", url: "", events: [] as string[] });
+  const [testResult, setTestResult] = useState<Record<number, { success: boolean; message: string } | null>>({});
+
+  const ALLOWED_EVENTS = [
+    "contract.uploaded",
+    "contract.analyzed",
+    "contract.signed",
+    "contract.updated",
+    "pipeline.stage_changed",
+  ];
+
+  const loadWebhooks = async () => {
+    try {
+      const data = await fetchApi("/api/webhooks");
+      setWebhooks(data);
+    } catch (e) {
+      console.error("Failed to load webhooks", e);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "webhooks") loadWebhooks();
+  }, [activeTab]);
+
+  const createWebhook = async () => {
+    if (!webhookForm.name || !webhookForm.url || webhookForm.events.length === 0) return;
+    await fetchApi("/api/webhooks", {
+      method: "POST",
+      body: JSON.stringify(webhookForm),
+    });
+    setWebhookForm({ name: "", url: "", events: [] });
+    setShowWebhookModal(false);
+    loadWebhooks();
+  };
+
+  const deleteWebhook = async (id: number) => {
+    await fetchApi(`/api/webhooks/${id}`, { method: "DELETE" });
+    setWebhooks((prev) => prev.filter((w) => w.id !== id));
+  };
+
+  const testWebhook = async (id: number) => {
+    const result = await fetchApi(`/api/webhooks/test/${id}`, { method: "POST" });
+    setTestResult((prev) => ({ ...prev, [id]: result }));
+    setTimeout(() => setTestResult((prev) => ({ ...prev, [id]: null })), 4000);
+  };
+
+  const toggleEvent = (event: string) => {
+    setWebhookForm((f) => ({
+      ...f,
+      events: f.events.includes(event) ? f.events.filter((e) => e !== event) : [...f.events, event],
+    }));
+  };
 
   const usageStats = {
     contractsAnalyzed: 14,
@@ -57,6 +129,7 @@ export default function SettingsPage() {
     { id: "profile", label: "Profile", icon: User },
     { id: "billing", label: "Billing", icon: CreditCard },
     { id: "notifications", label: "Notifications", icon: Bell },
+    { id: "webhooks", label: "Webhooks", icon: Webhook },
   ] as const;
 
   return (
@@ -599,6 +672,185 @@ export default function SettingsPage() {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ── Webhooks Tab ── */}
+        {activeTab === "webhooks" && (
+          <div className="space-y-6">
+            {/* Integration Cards */}
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100">
+                <h3 className="text-sm font-black text-slate-900">Pre-Built Integrations</h3>
+                <p className="text-[10px] text-slate-400 mt-0.5">Connect VelFlow with your existing tools</p>
+              </div>
+              <div className="divide-y divide-slate-50">
+                {[
+                  { name: "Slack", desc: "Post signing celebration messages to your sales channel", icon: "💬", color: "bg-purple-50", available: false },
+                  { name: "Zapier", desc: "Automate workflows across 5000+ apps on signing events", icon: "⚡", color: "bg-orange-50", available: false },
+                  { name: "HubSpot", desc: "Auto-mark deals as Closed-Won when contracts are signed", icon: "🔶", color: "bg-amber-50", available: false },
+                  { name: "Stripe", desc: "Trigger billing subscriptions after contract execution", icon: "💳", color: "bg-indigo-50", available: false },
+                ].map((integration) => (
+                  <div key={integration.name} className="flex items-center gap-4 px-5 py-4">
+                    <div className={`w-10 h-10 rounded-xl ${integration.color} flex items-center justify-center text-xl`}>
+                      {integration.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-slate-900">{integration.name}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{integration.desc}</p>
+                    </div>
+                    <button
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:border-slate-300 transition flex items-center gap-1.5"
+                      onClick={() => alert(`${integration.name} integration coming soon!`)}
+                    >
+                      Connect <ExternalLink className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Webhook Endpoints */}
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-black text-slate-900">Custom Webhook Endpoints</h3>
+                  <p className="text-[10px] text-slate-400 mt-0.5">POST JSON payloads to your own server on contract events</p>
+                </div>
+                <button
+                  onClick={() => setShowWebhookModal(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white text-xs font-semibold hover:opacity-90 transition"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Endpoint
+                </button>
+              </div>
+
+              {webhooks.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 gap-2">
+                  <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center">
+                    <Webhook className="w-5 h-5 text-slate-300" />
+                  </div>
+                  <p className="text-sm text-slate-400 font-medium">No webhooks configured</p>
+                  <p className="text-xs text-slate-300">Add an endpoint to receive real-time contract events</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-50">
+                  {webhooks.map((wh) => (
+                    <div key={wh.id} className="flex items-start gap-4 px-5 py-4 group">
+                      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${wh.is_active ? "bg-emerald-400" : "bg-slate-200"}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-sm font-bold text-slate-900">{wh.name}</span>
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-semibold ${wh.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"}`}>
+                            {wh.is_active ? "Active" : "Disabled"}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-400 font-mono truncate mb-1.5">{wh.url}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {wh.events.map((ev) => (
+                            <span key={ev} className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 font-medium">{ev}</span>
+                          ))}
+                        </div>
+                        {testResult[wh.id] && (
+                          <div className={`flex items-center gap-1.5 mt-2 text-xs font-medium ${
+                            testResult[wh.id]?.success ? "text-emerald-600" : "text-red-500"
+                          }`}>
+                            {testResult[wh.id]?.success ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                            {testResult[wh.id]?.message}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                        <button
+                          onClick={() => testWebhook(wh.id)}
+                          title="Send test payload"
+                          className="w-7 h-7 rounded-lg hover:bg-indigo-50 flex items-center justify-center text-slate-300 hover:text-indigo-500 transition"
+                        >
+                          <Play className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => deleteWebhook(wh.id)}
+                          className="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-300 hover:text-red-500 transition"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Add Webhook Modal */}
+            {showWebhookModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4">
+                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+                  <div className="flex items-center justify-between mb-5">
+                    <h3 className="text-base font-black text-slate-900">Add Webhook Endpoint</h3>
+                    <button onClick={() => setShowWebhookModal(false)} className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center">
+                      <X className="w-4 h-4 text-slate-500" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Endpoint Name *</label>
+                      <input
+                        value={webhookForm.name}
+                        onChange={(e) => setWebhookForm((f) => ({ ...f, name: e.target.value }))}
+                        placeholder="e.g., Slack Sales Channel"
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Endpoint URL *</label>
+                      <input
+                        value={webhookForm.url}
+                        onChange={(e) => setWebhookForm((f) => ({ ...f, url: e.target.value }))}
+                        placeholder="https://your-server.com/webhooks/velflow"
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-2">Subscribe to Events *</label>
+                      <div className="flex flex-col gap-2">
+                        {ALLOWED_EVENTS.map((event) => (
+                          <label key={event} className="flex items-center gap-2.5 cursor-pointer group">
+                            <div
+                              onClick={() => toggleEvent(event)}
+                              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition cursor-pointer ${
+                                webhookForm.events.includes(event)
+                                  ? "border-indigo-500 bg-indigo-500"
+                                  : "border-slate-300 bg-white hover:border-indigo-300"
+                              }`}
+                            >
+                              {webhookForm.events.includes(event) && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
+                            </div>
+                            <span className="text-xs text-slate-600 font-mono">{event}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 mt-6">
+                    <button
+                      onClick={() => setShowWebhookModal(false)}
+                      className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={createWebhook}
+                      disabled={!webhookForm.name || !webhookForm.url || webhookForm.events.length === 0}
+                      className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-40"
+                    >
+                      Add Endpoint
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

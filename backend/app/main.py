@@ -3,9 +3,37 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routers.auth import router as auth_router
 from app.routers.contracts import router as contracts_router
+from app.routers.crm import router as crm_router
+from app.routers.playbook import router as playbook_router
+from app.routers.webhook import router as webhook_router
 
 # Auto-initialize database tables (simplifies local setup with SQLite)
 Base.metadata.create_all(bind=engine)
+
+# Safeguard to add columns to contracts table if they are missing in SQLite
+from sqlalchemy import text
+with engine.connect() as conn:
+    # Check if counterparty_id column exists, if not add it
+    try:
+        conn.execute(text("SELECT counterparty_id FROM contracts LIMIT 1"))
+    except Exception:
+        try:
+            conn.execute(text("ALTER TABLE contracts ADD COLUMN counterparty_id INTEGER"))
+            conn.commit()
+            print("Successfully added counterparty_id column to contracts table.")
+        except Exception as e:
+            print("Could not add counterparty_id column:", e)
+
+    # Check if pipeline_id column exists, if not add it
+    try:
+        conn.execute(text("SELECT pipeline_id FROM contracts LIMIT 1"))
+    except Exception:
+        try:
+            conn.execute(text("ALTER TABLE contracts ADD COLUMN pipeline_id INTEGER"))
+            conn.commit()
+            print("Successfully added pipeline_id column to contracts table.")
+        except Exception as e:
+            print("Could not add pipeline_id column:", e)
 
 app = FastAPI(
     title="LexiCLM AI Contract Navigator API",
@@ -39,6 +67,9 @@ app.add_middleware(
 # Register routers
 app.include_router(auth_router)
 app.include_router(contracts_router)
+app.include_router(crm_router)
+app.include_router(playbook_router)
+app.include_router(webhook_router)
 
 @app.get("/")
 def read_root():

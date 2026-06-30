@@ -178,3 +178,180 @@ def compare_contracts_ai(base_text: str, compare_text: str, base_name: str, comp
     except Exception as e:
         print(f"Error in contract comparison AI: {e}")
         return {"error": str(e)}
+
+def generate_contract_draft(template_type: str, variables: dict) -> str:
+    """
+    Generates a contract draft based on the template type and user-provided variables.
+    Supports Nvidia NIM mistral completion or native offline fallbacks.
+    """
+    if not client:
+        # Fallback template generator if API key is not present
+        disclosing_party = variables.get("disclosing_party", "Disclosing Party")
+        receiving_party = variables.get("receiving_party", "Receiving Party")
+        effective_date = variables.get("effective_date", "2026-07-01")
+        governing_law = variables.get("governing_law", "Delaware")
+        purpose = variables.get("purpose", "evaluating a potential business partnership")
+        term = variables.get("term", "3 years")
+        value = variables.get("value", "0.0")
+
+        if template_type == "NDA":
+            return (
+                f"# MUTUAL NON-DISCLOSURE AGREEMENT\n\n"
+                f"This Mutual Non-Disclosure Agreement (\"Agreement\") is entered into on this {effective_date} "
+                f"(\"Effective Date\") by and between **{disclosing_party}** and **{receiving_party}** (collectively, \"Parties\").\n\n"
+                f"### 1. Purpose\n"
+                f"The Parties wish to explore a business opportunity of mutual interest regarding **{purpose}**. "
+                f"In connection with this, the Parties may share proprietary or confidential information.\n\n"
+                f"### 2. Definition of Confidential Information\n"
+                f"\"Confidential Information\" refers to any proprietary information, trade secrets, software, "
+                f"designs, or business plans marked confidential or disclosed under circumstances where it should "
+                f"reasonably be understood as confidential.\n\n"
+                f"### 3. Non-Disclosure Obligations\n"
+                f"The Receiving Party agrees to maintain the strict confidentiality of all disclosed information and "
+                f"not to use it for any purpose outside the scope of {purpose} without written permission.\n\n"
+                f"### 4. Term and Obligations\n"
+                f"This Agreement and the obligations of confidentiality shall remain in effect for a term of **{term}** "
+                f"from the Effective Date, unless terminated earlier by written notice.\n\n"
+                f"### 5. Governing Law\n"
+                f"This Agreement shall be governed by, and construed in accordance with, the laws of the State of **{governing_law}**.\n\n"
+                f"**IN WITNESS WHEREOF**, the Parties have executed this Agreement as of the Effective Date.\n\n"
+                f"**Disclosing Party:** {disclosing_party}  \n"
+                f"**Receiving Party:** {receiving_party}  \n"
+            )
+        elif template_type == "SaaS":
+            pricing = variables.get("pricing", "$10,000 annually")
+            sla = variables.get("sla", "99.9% uptime")
+            return (
+                f"# SOFTWARE AS A SERVICE (SAAS) AGREEMENT\n\n"
+                f"This SaaS Agreement is made as of {effective_date} by and between **{disclosing_party}** "
+                f"(\"Provider\") and **{receiving_party}** (\"Customer\").\n\n"
+                f"### 1. License Grant & Access\n"
+                f"Provider grants Customer a non-exclusive, non-transferable right to access and use the SaaS services "
+                f"for its internal business operations during the term of this agreement.\n\n"
+                f"### 2. Fees and Payments\n"
+                f"Customer shall pay Provider the SaaS subscription fees of **{pricing}**. Late payments shall accrue interest "
+                f"at 1.5% per month.\n\n"
+                f"### 3. Service Level Agreement (SLA)\n"
+                f"Provider commits to maintaining a monthly uptime service level of **{sla}**. If Provider fails to meet "
+                f"this level, Customer shall be entitled to service credits as detailed in Schedule A.\n\n"
+                f"### 4. Intellectual Property\n"
+                f"Provider retains all right, title, and interest in and to the SaaS platforms, designs, and logos. Customer "
+                f"retains all intellectual property rights to the data uploaded to the SaaS service.\n\n"
+                f"### 5. Governing Law\n"
+                f"This Agreement is governed by the laws of the State of **{governing_law}**.\n\n"
+                f"**IN WITNESS WHEREOF**, the Parties have executed this SaaS Agreement.\n"
+            )
+        else: # Contractor
+            scope = variables.get("scope", "providing software development and consulting services")
+            return (
+                f"# INDEPENDENT CONTRACTOR AGREEMENT\n\n"
+                f"This Agreement is made as of {effective_date} between **{disclosing_party}** (\"Client\") "
+                f"and **{receiving_party}** (\"Contractor\").\n\n"
+                f"### 1. Services to be Performed\n"
+                f"Contractor agrees to perform the services described in Exhibit A: **{scope}**.\n\n"
+                f"### 2. Compensation & Payments\n"
+                f"Client shall compensate Contractor in the amount of **{value}** upon successful completion of deliverables.\n\n"
+                f"### 3. Independent Contractor Status\n"
+                f"Contractor is an independent contractor. Contractor is not an employee, agent, or partner of the Client.\n\n"
+                f"### 4. Intellectual Property Ownership\n"
+                f"All work product, code, designs, or documentation produced by Contractor in connection with these services "
+                f"shall belong exclusively to the Client as work-for-hire upon full payment of fees.\n\n"
+                f"### 5. Governing Law\n"
+                f"This Agreement is governed by the laws of the State of **{governing_law}**.\n\n"
+                f"**IN WITNESS WHEREOF**, the Parties have signed this Agreement.\n"
+            )
+
+    prompt = (
+        f"You are an expert corporate lawyer. Your task is to draft a highly professional, comprehensive "
+        f"and legally sound contract of type '{template_type}' based on the following user-provided parameters:\n\n"
+        f"{json.dumps(variables, indent=2)}\n\n"
+        f"Ensure the draft includes standard boilerplates (Governing Law, Severability, Entire Agreement, Term/Termination, "
+        f"Intellectual Property, Liability/Indemnity limitations) and reads like a real, enforceable legal contract. "
+        f"Use Markdown headings, bold text, and lists to make it readable and beautifully formatted. Do not write any "
+        f"commentary, introductions, or legal disclaimers. Start drafting directly with the contract title."
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="mistralai/mistral-medium-3.5-128b",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=4000,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"Error generating contract draft: {e}")
+        return "Failed to generate legal draft using AI."
+
+
+def check_contract_against_playbook(contract_text: str, playbook_rules: list[dict]) -> list[dict]:
+    """
+    Checks a contract's extracted text against a list of company playbook rules.
+    Returns a list of violation dicts: [{rule_category, violation, clause_text, severity}]
+    Falls back to keyword matching if AI is unavailable.
+    """
+    if not client:
+        # Offline fallback: keyword matching
+        violations = []
+        for rule in playbook_rules:
+            category = rule.get("rule_category", "")
+            forbidden = rule.get("forbidden_terms", "") or ""
+            preferred = rule.get("preferred_terms", "") or ""
+            severity = rule.get("risk_level", "High")
+            
+            # Check forbidden terms
+            if forbidden:
+                for term in [t.strip() for t in forbidden.split(",") if t.strip()]:
+                    if term.lower() in contract_text.lower():
+                        violations.append({
+                            "rule_category": category,
+                            "violation": f"Forbidden term found: '{term}'",
+                            "clause_text": f"...{term}...",
+                            "severity": severity,
+                        })
+            # Check preferred terms are absent
+            if preferred:
+                for term in [t.strip() for t in preferred.split(",") if t.strip()]:
+                    if term.lower() not in contract_text.lower():
+                        violations.append({
+                            "rule_category": category,
+                            "violation": f"Required term missing: '{term}'",
+                            "clause_text": "(not found in document)",
+                            "severity": severity,
+                        })
+        return violations
+
+    rules_text = json.dumps(playbook_rules, indent=2)
+    prompt = (
+        "You are an expert corporate legal compliance officer. Your task is to review a contract "
+        "against a company's internal legal playbook rules and identify any violations.\n\n"
+        "Company Playbook Rules:\n"
+        f"{rules_text}\n\n"
+        "For each rule, check the contract text below and identify violations. "
+        "Return ONLY a valid JSON array. Each element must have exactly:\n"
+        "- 'rule_category': the category name from the rule\n"
+        "- 'violation': a short description of what violates the rule\n"
+        "- 'clause_text': the specific offending clause text (max 200 chars)\n"
+        "- 'severity': strictly 'High', 'Medium', or 'Low'\n\n"
+        "If no violations exist for a rule, omit it. Return [] if fully compliant.\n\n"
+        f"Contract Text:\n{contract_text[:25000]}"
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="mistralai/mistral-medium-3.5-128b",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=2048,
+        )
+        content = response.choices[0].message.content.strip()
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        return json.loads(content.strip())
+    except Exception as e:
+        print(f"Error in playbook compliance check: {e}")
+        return []

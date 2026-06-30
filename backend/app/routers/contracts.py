@@ -9,15 +9,42 @@ from app.config import settings
 from app.database import get_db
 from app.models.user import User
 from app.models.contract import Contract
+from app.models.signature_log import SignatureLog
+from app.models.comment import Comment
 from app.schemas.contract import ContractResponse
+from app.schemas.crm_phase3 import (
+    SignatureLogCreate,
+    SignatureLogResponse,
+    CommentCreate,
+    CommentResponse,
+)
 from app.services.auth import get_current_user
 from app.utils.document import extract_text_from_bytes
-from app.services.ai import extract_contract_metadata, ask_contract_question, compare_contracts_ai
+from app.services.ai import extract_contract_metadata, ask_contract_question, compare_contracts_ai, generate_contract_draft
+from app.services.webhook_dispatcher import dispatch_event
 
 class ChatRequest(BaseModel):
     question: str
 
+class DraftGenerateRequest(BaseModel):
+    template_type: str
+    variables: dict
+
 router = APIRouter(prefix="/api/contracts", tags=["contracts"])
+
+@router.post("/generate")
+def generate_draft(
+    req: DraftGenerateRequest,
+    current_user: User = Depends(get_current_user)
+):
+    try:
+        draft_text = generate_contract_draft(req.template_type, req.variables)
+        return {"draft": draft_text}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate contract draft: {str(e)}"
+        )
 
 # Restrict allowed file formats
 ALLOWED_EXTENSIONS = {".pdf", ".docx"}
@@ -30,6 +57,8 @@ def upload_contract(
     status: str = Form("Uploaded"),
     risk: str = Form(None),
     next_date: Optional[str] = Form(None),
+    counterparty_id: Optional[int] = Form(None),
+    pipeline_id: Optional[int] = Form(None),
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -95,6 +124,8 @@ def upload_contract(
         mime_type=file.content_type or "application/octet-stream",
         file_data=file_bytes,
         owner_id=current_user.id,
+        counterparty_id=counterparty_id,
+        pipeline_id=pipeline_id,
         summary_points=ai_data.get("summary_points", []),
         risks=ai_data.get("risks", []),
         dates_timeline=ai_data.get("dates_timeline", []),
@@ -176,6 +207,41 @@ def delete_contract(
     db.delete(contract)
     db.commit()
     return {"message": "Contract deleted successfully."}
+
+class ContractUpdateRequest(BaseModel):
+    name: Optional[str] = None
+    counterparty: Optional[str] = None
+    type: Optional[str] = None
+    status: Optional[str] = None
+    risk: Optional[str] = None
+    next_date: Optional[date] = None
+    counterparty_id: Optional[int] = None
+    pipeline_id: Optional[int] = None
+
+@router.put("/{id}", response_model=ContractResponse)
+def update_contract(
+    id: int,
+    req: ContractUpdateRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    contract = db.query(Contract).filter(
+        Contract.id == id,
+        Contract.owner_id == current_user.id
+    ).first()
+    
+    if not contract:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contract not found."
+        )
+        
+    for key, val in req.model_dump(exclude_unset=True).items():
+        setattr(contract, key, val)
+        
+    db.commit()
+    db.refresh(contract)
+    return contract
 
 @router.get("/{id}/file")
 def get_contract_file(
@@ -431,3 +497,130 @@ def seed_demo_contracts(
     db.add(contract_v2)
     db.commit()
     return {"message": "Demo data successfully seeded."}
+
+class GuestCommentCreate(BaseModel):
+    text: str
+    clause_index: Optional[int] = None
+    author_name: Optional[str] = "Guest Reviewer"
+
+class ShareContractResponse(BaseModel):
+    id: int
+    name: str
+    counterparty: str
+    type: str
+    status: str
+    risk: str
+    next_date: Optional[date] = None
+    text: Optional[str] = None
+    summary_points: Optional[list[str]] = None
+    risks: Optional[list[dict]] = None
+    dates_timeline: Optional[list[dict]] = None
+    details_extracted: Optional[bool] = False
+
+@router.post("/{id}/sign", response_model=SignatureLogResponse)
+def sign_contract(
+    id: int,
+    req: SignatureLogCreate,
+    db: Session = Depends(get_db)
+):
+    contract = db.query(Contract).filter(Contract.id == id).first()
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+        
+    # Generate verification token
+    verification_token = str(uuid.uuid4())[:8].upper()
+    
+    db_sig = SignatureLog(
+        contract_id=id,
+        signer_name=req.signer_name,
+        signer_email=req.signer_email,
+        ip_address=req.ip_address or "127.0.0.1",
+        signature_svg=req.signature_svg,
+        verification_token=verification_token
+    )
+    
+    # Mark contract status as Signed
+    contract.status = "Signed"
+    
+    db.add(db_sig)
+    db.commit()
+    db.refresh(db_sig)
+
+    # Dispatch webhook event
+    dispatch_event(
+        "contract.signed",
+        {
+            "contract_id": id,
+            "contract_name": contract.name,
+            "signer_email": req.signer_email,
+            "verification_token": verification_token,
+        },
+        db,
+        contract.owner_id,
+    )
+
+    return db_sig
+
+@router.get("/{id}/signatures", response_model=List[SignatureLogResponse])
+def get_signature_logs(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    signatures = db.query(SignatureLog).filter(SignatureLog.contract_id == id).all()
+    return signatures
+
+@router.get("/{id}/comments", response_model=List[CommentResponse])
+def get_comments(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    comments = db.query(Comment).filter(Comment.contract_id == id).order_by(Comment.created_at.asc()).all()
+    return comments
+
+@router.post("/{id}/comments", response_model=CommentResponse)
+def post_comment(
+    id: int,
+    req: GuestCommentCreate,
+    db: Session = Depends(get_db)
+):
+    db_comment = Comment(
+        contract_id=id,
+        author_name=req.author_name or "Guest Reviewer",
+        text=req.text,
+        clause_index=req.clause_index
+    )
+    db.add(db_comment)
+    db.commit()
+    db.refresh(db_comment)
+    return db_comment
+
+@router.get("/{id}/share", response_model=ShareContractResponse)
+def get_shared_contract(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    contract = db.query(Contract).filter(Contract.id == id).first()
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+        
+    extracted_text = ""
+    if contract.file_data:
+        try:
+            extracted_text = extract_text_from_bytes(contract.file_data, contract.file_name)
+        except Exception:
+            extracted_text = "Could not extract document text."
+            
+    return ShareContractResponse(
+        id=contract.id,
+        name=contract.name,
+        counterparty=contract.counterparty,
+        type=contract.type,
+        status=contract.status,
+        risk=contract.risk,
+        next_date=contract.next_date,
+        text=extracted_text,
+        summary_points=contract.summary_points,
+        risks=contract.risks,
+        dates_timeline=contract.dates_timeline,
+        details_extracted=contract.details_extracted
+    )

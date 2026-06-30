@@ -10,6 +10,8 @@ class ContractBase(BaseModel):
     status: Optional[str] = "Uploaded"
     risk: Optional[str] = "Low"
     next_date: Optional[date] = None
+    counterparty_id: Optional[int] = None
+    pipeline_id: Optional[int] = None
 
 # Schema for creating a contract (metadata fields)
 class ContractCreate(ContractBase):

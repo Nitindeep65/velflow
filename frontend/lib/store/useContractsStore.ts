@@ -6,11 +6,13 @@ export interface Contract {
   name: string;
   counterparty: string;
   type: string;
-  status: "Uploaded" | "Analyzed" | "Needs Review";
+  status: "Uploaded" | "Analyzed" | "Needs Review" | "Signed" | "Active" | "Archived" | string;
   risk: "Low" | "Medium" | "High";
   next_date: string;
   created_at?: string;
   owner_id?: number;
+  counterparty_id?: number | null;
+  pipeline_id?: number | null;
 }
 
 interface ContractsState {
@@ -22,6 +24,7 @@ interface ContractsState {
   setIsNewContractOpen: (open: boolean) => void;
   fetchContracts: () => Promise<void>;
   addContract: (formData: FormData) => Promise<void>;
+  updateContract: (id: number, data: Partial<Contract>) => Promise<void>;
   deleteContract: (id: number) => Promise<void>;
   clearAll: () => void;
   restoreDefaults: () => Promise<void>;
@@ -69,6 +72,23 @@ export const useContractsStore = create<ContractsState>((set, get) => ({
     } catch (e) {
       if (!(e instanceof ApiError && e.status === 401)) {
         console.error("Failed to upload contract", e);
+      }
+      throw e;
+    }
+  },
+
+  updateContract: async (id, data) => {
+    try {
+      const result = await fetchApi(`/contracts/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+      set((state) => ({
+        contracts: state.contracts.map((c) => (c.id === id ? result : c)),
+      }));
+    } catch (e) {
+      if (!(e instanceof ApiError && e.status === 401)) {
+        console.error("Failed to update contract", e);
       }
       throw e;
     }

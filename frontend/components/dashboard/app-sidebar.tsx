@@ -28,6 +28,9 @@ import {
   ChevronRight,
   Scale,
   Copy,
+  FolderSync,
+  Users,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useContractsStore } from "@/lib/store/useContractsStore";
@@ -49,8 +52,12 @@ export function AppSidebar({ user, onLogout }: AppSidebarProps) {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Pipeline", href: "/dashboard/pipeline", icon: FolderSync },
+    { name: "Counterparties", href: "/dashboard/counterparties", icon: Users },
     { name: "Contracts", href: "/dashboard/contracts", icon: FileText, badge: contracts.length > 0 ? contracts.length : null },
     { name: "Templates", href: "/dashboard/templates", icon: Copy },
+    { name: "Playbook", href: "/dashboard/playbook", icon: Scale },
+    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
