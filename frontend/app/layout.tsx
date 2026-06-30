@@ -22,8 +22,37 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Velflow | AI Contract & Policy Navigator",
-  description: "Understand every legal document before you sign. Premium AI-powered contract review, risk indexing, version comparison, and date timeline tracking.",
+  title: "VelFlow | Enterprise AI Contract & Policy Compliance Guard",
+  description: "Understand every clause before you sign. Premium AI CLM platform featuring instant risk audits, redline comparisons, webhook notifications, and automated playbook compliance guards.",
+  keywords: [
+    "AI Contract Review",
+    "Contract Lifecycle Management",
+    "CLM SaaS",
+    "Legal AI co-pilot",
+    "Playbook Compliance",
+    "Contract Redlines",
+    "E-signature",
+    "Notice deadline tracker",
+  ],
+  authors: [{ name: "VelFlow Team" }],
+  openGraph: {
+    title: "VelFlow | Enterprise AI Contract & Policy Compliance Guard",
+    description: "Understand every clause before you sign. Premium AI CLM platform featuring instant risk audits, redline comparisons, webhook notifications, and automated playbook compliance guards.",
+    url: "https://velflow.dev",
+    siteName: "VelFlow CLM",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VelFlow | Enterprise AI Contract & Policy Compliance Guard",
+    description: "Understand every clause before you sign. Premium AI CLM platform featuring instant risk audits, redline comparisons, webhook notifications, and automated playbook compliance guards.",
+    creator: "@velflow",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

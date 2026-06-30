@@ -522,7 +522,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
               <Link href="/signup">
                 <button
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 h-12 rounded-xl text-white text-sm font-black cursor-pointer transition-all hover:-translate-y-0.5"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 h-12 rounded-xl text-white text-sm font-black cursor-pointer transition-all hover:-translate-y-0.5 animate-in fade-in zoom-in-95 duration-300"
                   style={{
                     background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
                     boxShadow: "0 4px 20px rgba(15,23,42,0.25), 0 1px 0 rgba(255,255,255,0.1) inset",
@@ -540,6 +540,32 @@ export default function LandingPage() {
                 Try the Clause Sandbox
                 <ChevronRight className="h-4 w-4" />
               </button>
+            </div>
+
+            {/* Quick-Navigator Bar */}
+            <div className="pt-6">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 text-center">⚡ Click to instantly explore features</p>
+              <div className="flex flex-wrap items-center justify-center gap-2 max-w-xl mx-auto">
+                {[
+                  { label: "🔍 Risk Analyzer", sectionId: "sandbox" },
+                  { label: "💬 Legal AI Chat", sectionId: "features", tab: "chat" },
+                  { label: "⚖️ Smart Redlines", sectionId: "features", tab: "diff" },
+                  { label: "📅 Obligation timeline", sectionId: "features", tab: "timeline" },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => {
+                      scrollToSection(item.sectionId);
+                      if (item.tab) {
+                        setActiveTab(item.tab as any);
+                      }
+                    }}
+                    className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white border border-slate-200 hover:border-indigo-400 hover:bg-white text-slate-600 hover:text-indigo-600 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all cursor-pointer hover:-translate-y-0.5"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

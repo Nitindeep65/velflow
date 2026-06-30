@@ -736,43 +736,47 @@ export default function SettingsPage() {
               ) : (
                 <div className="divide-y divide-slate-50">
                   {webhooks.map((wh) => (
-                    <div key={wh.id} className="flex items-start gap-4 px-5 py-4 group">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${wh.is_active ? "bg-emerald-400" : "bg-slate-200"}`} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-bold text-slate-900">{wh.name}</span>
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-semibold ${wh.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"}`}>
-                            {wh.is_active ? "Active" : "Disabled"}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-400 font-mono truncate mb-1.5">{wh.url}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {wh.events.map((ev) => (
-                            <span key={ev} className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 font-medium">{ev}</span>
-                          ))}
-                        </div>
-                        {testResult[wh.id] && (
-                          <div className={`flex items-center gap-1.5 mt-2 text-xs font-medium ${
-                            testResult[wh.id]?.success ? "text-emerald-600" : "text-red-500"
-                          }`}>
-                            {testResult[wh.id]?.success ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                            {testResult[wh.id]?.message}
+                    <div key={wh.id} className="flex flex-col sm:flex-row items-stretch sm:items-start gap-4 px-5 py-4 group">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${wh.is_active ? "bg-emerald-400" : "bg-slate-200"}`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-sm font-bold text-slate-900">{wh.name}</span>
+                            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-semibold ${wh.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"}`}>
+                              {wh.is_active ? "Active" : "Disabled"}
+                            </span>
                           </div>
-                        )}
+                          <p className="text-xs text-slate-400 font-mono break-all sm:truncate mb-1.5">{wh.url}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {wh.events.map((ev) => (
+                              <span key={ev} className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 font-medium">{ev}</span>
+                            ))}
+                          </div>
+                          {testResult[wh.id] && (
+                            <div className={`flex items-center gap-1.5 mt-2 text-xs font-medium ${
+                              testResult[wh.id]?.success ? "text-emerald-600" : "text-red-500"
+                            }`}>
+                              {testResult[wh.id]?.success ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                              {testResult[wh.id]?.message}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                      <div className="flex items-center justify-end gap-1.5 shrink-0 border-t border-slate-50 pt-2.5 sm:pt-0 sm:border-none opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200">
                         <button
                           onClick={() => testWebhook(wh.id)}
                           title="Send test payload"
-                          className="w-7 h-7 rounded-lg hover:bg-indigo-50 flex items-center justify-center text-slate-300 hover:text-indigo-500 transition"
+                          className="px-2.5 py-1.5 sm:p-0 sm:w-7 sm:h-7 rounded-lg bg-slate-50 sm:bg-transparent hover:bg-indigo-50 flex items-center justify-center text-slate-500 sm:text-slate-300 hover:text-indigo-500 border border-slate-100 sm:border-none text-xs font-semibold gap-1 cursor-pointer transition"
                         >
-                          <Play className="w-3.5 h-3.5" />
+                          <Play className="w-3 w-3" />
+                          <span className="sm:hidden text-[10px]">Test Webhook</span>
                         </button>
                         <button
                           onClick={() => deleteWebhook(wh.id)}
-                          className="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center text-slate-300 hover:text-red-500 transition"
+                          className="px-2.5 py-1.5 sm:p-0 sm:w-7 sm:h-7 rounded-lg bg-slate-50 sm:bg-transparent hover:bg-red-50 flex items-center justify-center text-slate-500 sm:text-slate-300 hover:text-red-500 border border-slate-100 sm:border-none text-xs font-semibold gap-1 cursor-pointer transition"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3 w-3" />
+                          <span className="sm:hidden text-[10px]">Delete</span>
                         </button>
                       </div>
                     </div>
